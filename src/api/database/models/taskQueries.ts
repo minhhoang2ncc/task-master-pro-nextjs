@@ -49,7 +49,7 @@ export async function createTaskInSupabase(task: TaskRecord): Promise<{ data: Ta
   console.log(dbPayload)
   const { data, error } = await supabase
     .from('tasks')
-    .insert([dbPayload])
+    .insert(dbPayload.task)
     .select()
     .single()
 
