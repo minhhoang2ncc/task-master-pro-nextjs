@@ -50,7 +50,17 @@ export default function SettingsPage() {
   }
 
   const handleSave = () => {
-    dispatch({ type: USER_UPDATE_REQUESTED, payload: user })
+    console.log("Saving...")
+    dispatch({
+      type: USER_UPDATE_REQUESTED,
+      payload: {
+        ...user,
+        browserNotifications: notify.browserNotifications,
+        emailNotifications: notify.emailNotifications,
+        languageDisplay: language.language,
+      },
+    })
+
     dispatch(updateNotificationSettings(notify))
     dispatch(updateLanguageSettings(language))
   }

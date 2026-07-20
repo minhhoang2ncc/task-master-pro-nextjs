@@ -63,9 +63,10 @@ function* saveTaskSaga(action: PayloadAction<TaskRecord>) {
 }
 
 function* deleteTaskSaga(action: PayloadAction<TaskRecord>) {
-  yield put(remove({ id: action.payload.id }))
   try {
     yield call(deleteTaskApi, action.payload.id)
+    yield put(remove({ id: action.payload.id }))
+
   } catch (error) {
     yield put(append(action.payload))
     yield put({ type: TASK_REQUEST_FAILED, payload: (error as Error).message })

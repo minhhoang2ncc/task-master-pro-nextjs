@@ -1,7 +1,9 @@
 import type { User } from "@/shared/type"
 import { supabase } from "@/api/database/client"
 
+
 const TARGET_USER_ID = "b9c92921-8c4b-41ad-bc27-24bd96e17999"
+const PASS = '1234'
 
 const DEFAULT_USER: User = {
   id: TARGET_USER_ID,
@@ -38,19 +40,26 @@ export async function fetchUser(id: string | number): Promise<User> {
 }
 
 // PUT /users
-export async function updateUser(payload: Partial<User>): Promise<User> {
+export async function updateUser(payload: any): Promise<User> {
   const userId = payload.id || TARGET_USER_ID
+
   const dbPayload = {
     id: userId,
     display_name: payload.displayName,
     email: payload.email,
     role: payload.role,
+    password_hash: PASS,
+    browser_notifications: payload.browserNotifications,
+    email_notifications: payload.emailNotifications,
+    language_display: payload.languageDisplay
   }
+
+  console.log(dbPayload)
 
   try {
     const { data, error } = await supabase
       .from("users")
-      .upsert([dbPayload])
+      .upsert(dbPayload)
       .select()
       .single()
 

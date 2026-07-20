@@ -21,11 +21,13 @@ function* fetchUserSaga(action: PayloadAction<string | number>) {
   }
 }
 
-function* updateUserSaga(action: PayloadAction<Partial<User>>) {
+function* updateUserSaga(action: any) {
   try {
-    const updatedUser: User = yield call(updateUserApi, action.payload)
-    console.log(updatedUser)
-    yield put(updateUser(action.payload))
+    console.log('payload: ', action.payload)
+    const { emailNotifications, languageDisplay, browserNotifications, ...user } = action.payload
+    console.log('user:', user)
+    yield call(updateUserApi, action.payload)
+    yield put(updateUser(user))
   } catch (error) {
     yield put({ type: USER_REQUEST_FAILED, payload: (error as Error).message })
   }
