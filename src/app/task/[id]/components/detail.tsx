@@ -18,9 +18,9 @@ import { Button } from "@/shared/components/button"
 import { useDispatch } from "react-redux"
 import { TASK_DELETE_REQUESTED } from "@/redux/saga/taskSaga"
 import { useRouter } from "next/navigation"
-import type { TaskRecord } from "@/shared/type"
+import type { TaskRecord } from "@/shared/types/task"
 import type { AppDispatch } from "@/redux/store"
-import { taskSchema, type TaskFormValues } from "@/shared/lib/schema"
+import { taskSchema, type TaskFormValues } from "@/shared/lib/schema/schema"
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

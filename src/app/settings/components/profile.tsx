@@ -1,5 +1,5 @@
 import { ProfileCard } from "./profile-card"
-import type { User } from "@/shared/type"
+import type { User } from "@/shared/types/user"
 
 export function Profile({
   user,

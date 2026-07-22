@@ -7,7 +7,7 @@ import { TASK_FETCH_ALL_REQUESTED } from "@/redux/saga/taskSaga"
 import { USER_FETCH_REQUESTED } from "@/redux/saga/userSaga"
 import { TaskForm } from "@/shared/layouts/task-form"
 import { UserForm } from "@/shared/layouts/user-form"
-import type { TaskRecord } from "@/shared/type"
+import type { TaskRecord } from "@/shared/types/task"
 import dayjs from "dayjs"
 
 type Theme = "dark" | "light" | "system"
@@ -182,20 +182,20 @@ export const useTheme = () => {
   return context
 }
 
-function InitialDataFetcher() {
+function InitialDataFetcher({ sessionUserId }: { sessionUserId?: string }) {
   const dispatch = useDispatch()
   const tasks = useSelector((state: RootState) => state.tasks)
-  const user = useSelector((state: RootState) => state.user)
 
   React.useEffect(() => {
+    if (!sessionUserId) return
     if (tasks.length === 0) {
       dispatch({ type: TASK_FETCH_ALL_REQUESTED })
     }
     dispatch({
       type: USER_FETCH_REQUESTED,
-      payload: "b9c92921-8c4b-41ad-bc27-24bd96e17999",
+      payload: sessionUserId,
     })
-  }, [dispatch, tasks.length, user?.id])
+  }, [dispatch, tasks.length, sessionUserId])
 
   return null
 }
@@ -227,13 +227,21 @@ function GlobalModals() {
   )
 }
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  children,
+  sessionUserId,
+  authOnly = false,
+}: {
+  children: React.ReactNode
+  sessionUserId?: string
+  authOnly?: boolean
+}) {
   return (
     <Provider store={store}>
       <ThemeProvider defaultTheme="system" storageKey="theme">
-        <InitialDataFetcher />
+        {!authOnly && <InitialDataFetcher sessionUserId={sessionUserId} />}
         {children}
-        <GlobalModals />
+        {!authOnly && <GlobalModals />}
       </ThemeProvider>
     </Provider>
   )

@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import Link from "next/link"
+import { useTransition } from "react"
 
 import {
   Sidebar,
@@ -17,25 +18,30 @@ import { Button } from "@/shared/components/button"
 import { useSelector } from "react-redux"
 import type { RootState } from "@/redux/store"
 
-import { LayoutDashboard, Settings, BarChart2 } from "lucide-react"
+import { LayoutDashboard, Settings, BarChart2, LogOut, Loader2 } from "lucide-react"
 import { BUTTON_VARIANTS, SIDEBAR_ITEM } from "../styles/tailwind-classes"
 import { cn } from "../lib/utils"
 import { Card, CardContent } from "@/shared/components/card"
 import { Avatar, AvatarFallback, AvatarImage } from "../components/avatar"
 
 import { useState, useEffect } from "react"
+import { logout } from "@/app/actions/auth"
+
 export function AppSidebar() {
   const [mounted, setMounted] = useState(false)
+  const [isPending, startTransition] = useTransition()
+
   useEffect(() => {
     setMounted(true)
   }, [])
 
   const reduxUser = useSelector((state: RootState) => state.user)
   const user = mounted ? reduxUser : {
-    displayName: "Nguyễn Văn A",
-    email: "vana.intern@taskmaster.pro",
-    role: "Frontend Engineering Intern",
+    displayName: "",
+    email: "",
+    role: "",
   }
+
   const sidebarItems = [
     { name: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
     { name: "Analytics", url: "/analytics", icon: BarChart2 },
@@ -43,10 +49,23 @@ export function AppSidebar() {
   ]
 
   const pathname = usePathname()
+
   const openTaskDialog = () => {
     const dialog = document.getElementById('inputDialog') as HTMLDialogElement
     dialog?.showModal()
   }
+
+  const handleLogout = () => {
+    startTransition(async () => {
+      await logout()
+    })
+  }
+
+  const avatarSeed = encodeURIComponent(user.displayName || "user")
+  const initials = user.displayName
+    ? user.displayName.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)
+    : "U"
+
   return (
     <Sidebar>
       <SidebarHeader className="p-5">
@@ -82,17 +101,27 @@ export function AppSidebar() {
           <Card className='w-full bg-tabs-background dark:bg-background border-none rounded-xl ring-0 shadow-none'>
             <CardContent className='flex justify-start items-center gap-4'>
               <Avatar className="h-8 w-8 border-2 border-white">
-                <AvatarImage src={`https://api.dicebear.com/7.x/notionists/svg?seed=1`} alt="Assignee" />
-                <AvatarFallback>U</AvatarFallback>
+                <AvatarImage src={`https://api.dicebear.com/7.x/notionists/svg?seed=${avatarSeed}`} alt={user.displayName} />
+                <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>
-              <div className="flex flex-col justify-start gap-1">
-                <span className='text-md font-semibold'>
-                  {user.displayName}
+              <div className="flex flex-col justify-start gap-1 flex-1 min-w-0">
+                <span className='text-md font-semibold truncate'>
+                  {user.displayName || "Loading…"}
                 </span>
-                <span className='text-sm text-muted-foreground'>
+                <span className='text-sm text-muted-foreground truncate'>
                   {user.role}
                 </span>
               </div>
+              <button
+                type="button"
+                aria-label="Sign out"
+                title="Sign out"
+                onClick={handleLogout}
+                disabled={isPending}
+                className="shrink-0 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+              >
+                {isPending ? <Loader2 className="size-4 animate-spin" /> : <LogOut className="size-4" />}
+              </button>
             </CardContent>
           </Card>
         </div>

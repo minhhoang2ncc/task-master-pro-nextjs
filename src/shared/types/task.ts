@@ -19,21 +19,3 @@ export interface TaskRecord {
   tags?: { name: string; color: string }[]
   subtasks?: Subtask[]
 }
-
-export interface User {
-  id?: string
-  displayName: string
-  email: string
-  role: string
-}
-
-export interface NotificationSettings {
-  browserNotifications: boolean
-  emailNotifications: boolean
-}
-
-export type AppLanguage = 'English' | 'Vietnamese' | 'Japanese' | string
-
-export interface LanguageSettings {
-  language: AppLanguage
-}

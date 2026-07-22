@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { TaskRecord } from "@/shared/type";
+import type { TaskRecord } from "@/shared/types/task";
 import dayjs from "dayjs";
 
 // ─── Normalizer ───────────────────────────────────────────────────────────────

@@ -1,20 +1,20 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { LanguageSettings } from "@/shared/type"
+import type { LanguageSettings } from "@/shared/types/task"
 
 const initialState: LanguageSettings = {
-    language: "English",
+  language: "English",
 }
 
 const languageSlice = createSlice({
-    name: "language",
-    initialState,
-    reducers: {
-        setLanguageSettings: (_state, action: PayloadAction<LanguageSettings>) => action.payload,
-        updateLanguageSettings: (state, action: PayloadAction<Partial<LanguageSettings>>) => {
-            Object.assign(state, action.payload)
-        },
-        resetLanguageSettings: () => initialState,
+  name: "language",
+  initialState,
+  reducers: {
+    setLanguageSettings: (_state, action: PayloadAction<LanguageSettings>) => action.payload,
+    updateLanguageSettings: (state, action: PayloadAction<Partial<LanguageSettings>>) => {
+      Object.assign(state, action.payload)
     },
+    resetLanguageSettings: () => initialState,
+  },
 })
 
 export const { setLanguageSettings, updateLanguageSettings, resetLanguageSettings } = languageSlice.actions

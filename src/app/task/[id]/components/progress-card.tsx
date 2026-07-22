@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/card"
 import { Progress } from "@/shared/components/progress"
-import type { Subtask } from "@/shared/type"
+import type { Subtask } from "@/shared/types/task"
 
 export function ProgressCard({ progress, subtasks }: { progress: number, subtasks: Subtask[] }) {
   const percentage = progress / (subtasks.length ? subtasks.length : 1) * 100;

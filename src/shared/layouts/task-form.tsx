@@ -4,14 +4,14 @@ import { useEffect, useRef, useState } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import dayjs from "dayjs"
-import type { TaskRecord } from "@/shared/type"
+import type { TaskRecord } from "@/shared/types/task"
 import { Button } from "@/shared/components/button"
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
 import { ChevronRight, AlertCircle } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux"
 import { TASK_CREATE_REQUESTED } from "@/redux/saga/taskSaga"
 import type { AppDispatch, RootState } from "@/redux/store"
-import { taskSchema, type TaskFormValues } from "@/shared/lib/schema"
+import { taskSchema, type TaskFormValues } from "@/shared/lib/schema/schema"
 
 export function TaskForm({
   task,
@@ -78,6 +78,7 @@ export function TaskForm({
       tags: task.tags ?? [],
     }
 
+    console.log(nextTask)
     dispatch({ type: TASK_CREATE_REQUESTED, payload: nextTask })
     onSubmit?.(nextTask)
     handleCloseDialog()

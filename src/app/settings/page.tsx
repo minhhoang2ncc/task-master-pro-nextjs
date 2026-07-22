@@ -12,7 +12,8 @@ import { USER_UPDATE_REQUESTED } from "@/redux/saga/userSaga"
 import { updateNotificationSettings } from "@/redux/slices/notifySlice"
 import { updateLanguageSettings } from "@/redux/slices/languageSlice"
 import type { RootState } from "@/redux/store"
-import type { AppLanguage, LanguageSettings, NotificationSettings, User } from "@/shared/type"
+import type { AppLanguage, LanguageSettings, NotificationSettings } from "@/shared/types/setting"
+import type { User } from "@/shared/types/user"
 import { TEXT_SIZES } from "@/shared/styles/tailwind-classes"
 
 export default function SettingsPage() {
@@ -63,6 +64,7 @@ export default function SettingsPage() {
 
     dispatch(updateNotificationSettings(notify))
     dispatch(updateLanguageSettings(language))
+    console.log("Done")
   }
 
   const [mounted, setMounted] = useState(false)

@@ -1,83 +1,92 @@
-import type { User } from "@/shared/type"
-import { supabase } from "@/api/database/client"
+import type { User, UpdateUserPayload } from '@/shared/types/user'
+import { UpdateUserPayloadSchema } from '@/shared/types/user'
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-
-const TARGET_USER_ID = "b9c92921-8c4b-41ad-bc27-24bd96e17999"
-const PASS = '1234'
-
-const DEFAULT_USER: User = {
-  id: TARGET_USER_ID,
-  displayName: "Nguyễn Văn A",
-  email: "vana.intern@taskmaster.pro",
-  role: "Frontend Engineering Intern",
-}
-
-function parseDbRowToUser(row: any): User {
+/**
+ * Maps a raw Supabase database row to the application's `User` shape.
+ * Handles both snake_case (from the DB) and camelCase (normalised) keys.
+ */
+function parseDbRowToUser(row: Record<string, unknown>): User {
   return {
-    id: row.id || TARGET_USER_ID,
-    displayName: row.display_name || row.displayName || "Nguyễn Văn A",
-    email: row.email || "vana.intern@taskmaster.pro",
-    role: row.role || "Frontend Engineering Intern",
+    id: row.id as string,
+    displayName: (row.display_name ?? row.displayName ?? '') as string,
+    email: (row.email ?? '') as string,
+    role: (row.role ?? '') as string,
   }
 }
 
-// GET /users/:id
-export async function fetchUser(id: string | number): Promise<User> {
+// ─── User CRUD ────────────────────────────────────────────────────────────────
+
+/**
+ * Fetches a user profile by ID.
+ *
+ * Delegates to the `/api/user/[id]` server-side Route Handler so the Supabase
+ * access token is forwarded from the session cookie and `auth.uid()` resolves
+ * correctly for RLS policies.
+ */
+export async function fetchUser(id: string | number): Promise<UpdateUserPayload> {
   try {
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", id)
-      .single()
-    console.log(data)
-    if (!error && data) {
-      return parseDbRowToUser(data)
+    const res = await fetch(`/api/user/${id}`, { credentials: 'include' })
+    if (res.ok) {
+      const row = await res.json()
+      console.log('res', row)
+      console.log('Schema', UpdateUserPayloadSchema.parse(row))
+
+      return UpdateUserPayloadSchema.parse(row)
     }
+    const err = await res.json().catch(() => ({}))
+    console.warn(`Could not fetch user ${id}:`, err)
   } catch (err) {
-    console.warn(`Could not fetch user ${id} from Supabase, returning default user:`, err)
-  }
-  return DEFAULT_USER
-}
-
-// PUT /users
-export async function updateUser(payload: any): Promise<User> {
-  const userId = payload.id || TARGET_USER_ID
-
-  const dbPayload = {
-    id: userId,
-    display_name: payload.displayName,
-    email: payload.email,
-    role: payload.role,
-    password_hash: PASS,
-    browser_notifications: payload.browserNotifications,
-    email_notifications: payload.emailNotifications,
-    language_display: payload.languageDisplay
+    console.warn(`Unexpected error fetching user ${id}:`, err)
   }
 
-  console.log(dbPayload)
-
-  try {
-    const { data, error } = await supabase
-      .from("users")
-      .upsert(dbPayload)
-      .select()
-      .single()
-
-    if (!error && data) {
-      return parseDbRowToUser(data)
-    }
-  } catch (err) {
-    console.warn("Could not upsert user into Supabase:", err)
-  }
-
+  // Fallback — return a minimal placeholder so callers always get a User shape.
   return {
-    ...DEFAULT_USER,
-    ...payload,
-    id: userId,
+    id: String(id),
+    displayName: 'User',
+    email: '',
+    role: '',
   }
 }
 
-// POST /settings
-export async function postSaveSettings(payload: unknown): Promise<unknown> {
-  return payload
+// ─── User Update Payload ──────────────────────────────────────────────────────
+
+/**
+ * Updates (upserts) a user profile.
+ *
+ * Delegates to the `/api/user/[id]` Route Handler via a PUT request so the
+ * server-side session cookie is used and RLS policies are satisfied without
+ * exposing the access token to client code.
+ *
+ * On failure, returns the original payload merged with the provided `id` so
+ * callers always receive a User-shaped object.
+ */
+export async function updateUser(payload: UpdateUserPayload): Promise<User> {
+  const { id, ...rest } = payload
+  console.log(rest)
+  try {
+    const res = await fetch(`/api/user/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(rest),
+    })
+
+    if (res.ok) {
+      const row = await res.json()
+      return parseDbRowToUser(row)
+    }
+    const err = await res.json().catch(() => ({}))
+    console.warn(`Could not update user ${id}:`, err)
+  } catch (err) {
+    console.warn(`Unexpected error updating user ${id}:`, err)
+  }
+
+  // Fallback — return a best-effort User from the payload.
+  return {
+    id,
+    displayName: payload.displayName ?? '',
+    email: payload.email ?? '',
+    role: payload.role ?? '',
+  }
 }

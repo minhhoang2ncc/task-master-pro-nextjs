@@ -1,7 +1,11 @@
 import { call, put, takeLatest, all, fork } from 'redux-saga/effects'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { User } from '@/shared/type'
+import type { UpdateUserPayload } from '@/shared/types/user'
+import { UserSchema } from '@/shared/types/user'
+import { NotificationSettingsSchema } from '@/shared/types/setting'
 import { setUser, updateUser } from '@/redux/slices/userSlice'
+import { updateLanguageSettings } from '../slices/languageSlice'
+import { updateNotificationSettings } from '../slices/notifySlice'
 import { fetchUser as fetchUserApi, updateUser as updateUserApi } from '@/api/userApi'
 
 // ─── Action Types ─────────────────────────────────────────────────────────────
@@ -14,18 +18,22 @@ export const USER_REQUEST_FAILED = 'user/requestFailed'
 
 function* fetchUserSaga(action: PayloadAction<string | number>) {
   try {
-    const user: User = yield call(fetchUserApi, action.payload)
-    yield put(setUser(user))
+    const user: UpdateUserPayload = yield call(fetchUserApi, action.payload)
+    console.log('user', UserSchema.parse(user))
+    yield put(setUser(UserSchema.parse(user)))
+    console.log('notify', updateNotificationSettings(NotificationSettingsSchema.parse(user)))
+    yield put(updateNotificationSettings(NotificationSettingsSchema.parse(user)))
+    console.log('language', user.languageDisplay)
+    yield put(updateLanguageSettings(user.languageDisplay))
   } catch (error) {
+    console.error('🔴 fetchUserSaga error:', error)
     yield put({ type: USER_REQUEST_FAILED, payload: (error as Error).message })
   }
 }
 
-function* updateUserSaga(action: any) {
+function* updateUserSaga(action: PayloadAction<UpdateUserPayload>) {
   try {
-    console.log('payload: ', action.payload)
     const { emailNotifications, languageDisplay, browserNotifications, ...user } = action.payload
-    console.log('user:', user)
     yield call(updateUserApi, action.payload)
     yield put(updateUser(user))
   } catch (error) {

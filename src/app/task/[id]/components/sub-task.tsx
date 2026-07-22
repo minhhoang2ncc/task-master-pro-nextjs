@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "@/shared/components/card"
 import { Checkbox } from "@/shared/components/checkbox"
 import { Button } from "@/shared/components/button"
 import { GripVertical, Plus, Network, TrashIcon } from "lucide-react"
-import type { Subtask, TaskRecord } from "@/shared/type"
+import type { Subtask, TaskRecord } from "@/shared/types/task"
 import { useEffect, useState, useRef } from "react"
 
 
