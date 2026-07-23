@@ -239,9 +239,9 @@ export function Detail({
           <div className="space-y-3 pt-2">
             <Label>Tags</Label>
             <div className="flex flex-wrap items-center gap-2">
-              {tags.map((tag) => (
+              {tags.map((tag, index) => (
                 <Badge
-                  key={tag.name}
+                  key={`${tag.name}-${index}`}
                   variant="secondary"
                   className={`${tag.color} text-white flex items-center gap-1 pr-1`}
                 >

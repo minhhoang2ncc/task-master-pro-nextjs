@@ -1,6 +1,3 @@
-// Pure JWT utilities — usable in Edge/Middleware, Server Components, and Server Actions
-// Do NOT import 'server-only' here so this can also be used in the Edge runtime.
-
 import { SignJWT, jwtVerify } from 'jose'
 
 export interface SessionPayload {
@@ -26,7 +23,7 @@ export async function encrypt(payload: SessionPayload): Promise<string> {
   })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime('1m')
     .sign(getEncodedKey())
 }
 

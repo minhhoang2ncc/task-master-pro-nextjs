@@ -1,11 +1,6 @@
 import type { User, UpdateUserPayload } from '@/shared/types/user'
 import { UpdateUserPayloadSchema } from '@/shared/types/user'
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/**
- * Maps a raw Supabase database row to the application's `User` shape.
- * Handles both snake_case (from the DB) and camelCase (normalised) keys.
- */
 function parseDbRowToUser(row: Record<string, unknown>): User {
   return {
     id: row.id as string,
@@ -15,15 +10,6 @@ function parseDbRowToUser(row: Record<string, unknown>): User {
   }
 }
 
-// ─── User CRUD ────────────────────────────────────────────────────────────────
-
-/**
- * Fetches a user profile by ID.
- *
- * Delegates to the `/api/user/[id]` server-side Route Handler so the Supabase
- * access token is forwarded from the session cookie and `auth.uid()` resolves
- * correctly for RLS policies.
- */
 export async function fetchUser(id: string | number): Promise<UpdateUserPayload> {
   try {
     const res = await fetch(`/api/user/${id}`, { credentials: 'include' })
@@ -40,7 +26,6 @@ export async function fetchUser(id: string | number): Promise<UpdateUserPayload>
     console.warn(`Unexpected error fetching user ${id}:`, err)
   }
 
-  // Fallback — return a minimal placeholder so callers always get a User shape.
   return {
     id: String(id),
     displayName: 'User',
@@ -53,18 +38,6 @@ export async function fetchUser(id: string | number): Promise<UpdateUserPayload>
   }
 }
 
-// ─── User Update Payload ──────────────────────────────────────────────────────
-
-/**
- * Updates (upserts) a user profile.
- *
- * Delegates to the `/api/user/[id]` Route Handler via a PUT request so the
- * server-side session cookie is used and RLS policies are satisfied without
- * exposing the access token to client code.
- *
- * On failure, returns the original payload merged with the provided `id` so
- * callers always receive a User-shaped object.
- */
 export async function updateUser(payload: UpdateUserPayload): Promise<User> {
   const { id, ...rest } = payload
   console.log(rest)

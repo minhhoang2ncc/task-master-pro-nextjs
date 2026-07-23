@@ -1,18 +1,6 @@
 import type { TaskRecord } from "@/shared/types/task"
 import dayjs from 'dayjs'
 
-// NOTE: taskApi is called from browser-side Redux sagas.
-// All operations are delegated to Next.js Route Handlers (/api/tasks/...)
-// so the server can read the encrypted session cookie, attach the Supabase
-// JWT as an Authorization header, and satisfy Row Level Security (RLS).
-// All functions throw on error so the calling saga can catch and roll back.
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Serializes a TaskRecord for transport over HTTP.
- * `dueDate` is a dayjs object which must be converted to a string for JSON.
- */
 function serializeTask(task: TaskRecord): Record<string, unknown> {
   return {
     ...task,
@@ -20,19 +8,12 @@ function serializeTask(task: TaskRecord): Record<string, unknown> {
   }
 }
 
-/**
- * Deserializes a raw JSON task response from the Route Handler back into a
- * proper `TaskRecord`, converting the `dueDate` string to a dayjs object.
- */
 function deserializeTask(raw: any): TaskRecord {
   return {
     ...raw,
     dueDate: dayjs(raw.dueDate),
   }
 }
-
-// ─── Task API ─────────────────────────────────────────────────────────────────
-
 export async function postCreateTask(payload: TaskRecord, _userId: string): Promise<TaskRecord> {
   const res = await fetch('/api/tasks', {
     method: 'POST',

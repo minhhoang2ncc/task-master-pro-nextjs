@@ -3,7 +3,7 @@ import { Globe, ChevronRight, Lock } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/dropdown-menu"
 import { useState } from "react"
 import { Button } from "@/shared/components/button"
-import type { AppLanguage, LanguageSettings } from "@/shared/types/task"
+import type { AppLanguage, LanguageSettings } from "@/shared/types/setting"
 
 export function LanguageSecurity({
   settings,

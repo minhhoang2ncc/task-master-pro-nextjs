@@ -7,7 +7,6 @@ import {
 } from '@/api/database/models/taskQueries'
 import type { TaskRecord } from '@/shared/types/task'
 
-// ─── Shared Auth Guard ────────────────────────────────────────────────────────
 
 async function getAuthedClientOrUnauthorized() {
   const session = await getSession()
@@ -25,15 +24,6 @@ async function getAuthedClientOrUnauthorized() {
   }
 }
 
-// ─── GET /api/tasks ───────────────────────────────────────────────────────────
-
-/**
- * Fetches all tasks belonging to the authenticated user.
- *
- * The Supabase access_token is read from the encrypted session cookie and
- * forwarded as an Authorization header so that `auth.uid()` resolves
- * correctly for RLS policies on the tasks table.
- */
 export async function GET() {
   const { client, userId, unauthorized } = await getAuthedClientOrUnauthorized()
   if (!client || !userId) return unauthorized!
@@ -51,11 +41,6 @@ export async function GET() {
   return NextResponse.json(data)
 }
 
-// ─── POST /api/tasks ──────────────────────────────────────────────────────────
-
-/**
- * Creates a new task for the authenticated user.
- */
 export async function POST(req: Request) {
   const { client, userId, unauthorized } = await getAuthedClientOrUnauthorized()
   if (!client || !userId) return unauthorized!

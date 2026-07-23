@@ -220,7 +220,6 @@ export async function getTasksFromSupabase(
   const tasks = data || []
   const taskIds = tasks.map((t: any) => t.id)
 
-  // Fetch all subtasks in a single query and group by task id
   const subtasksByTaskId = await fetchSubtasksForTasks(taskIds, client)
 
   return {
