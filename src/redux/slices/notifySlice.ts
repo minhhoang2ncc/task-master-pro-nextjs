@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { NotificationSettings } from "@/shared/types/task"
+import type { NotificationSettings } from "@/shared/types/setting"
 
 const initialState: NotificationSettings = {
   browserNotifications: true,

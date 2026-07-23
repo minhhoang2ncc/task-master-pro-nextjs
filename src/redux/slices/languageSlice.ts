@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { LanguageSettings } from "@/shared/types/task"
+import type { LanguageSettings } from "@/shared/types/setting"
 
 const initialState: LanguageSettings = {
   language: "English",

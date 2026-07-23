@@ -24,7 +24,9 @@ function* fetchUserSaga(action: PayloadAction<string | number>) {
     console.log('notify', updateNotificationSettings(NotificationSettingsSchema.parse(user)))
     yield put(updateNotificationSettings(NotificationSettingsSchema.parse(user)))
     console.log('language', user.languageDisplay)
-    yield put(updateLanguageSettings(user.languageDisplay))
+    if (user.languageDisplay) {
+      yield put(updateLanguageSettings({ language: user.languageDisplay }))
+    }
   } catch (error) {
     console.error('🔴 fetchUserSaga error:', error)
     yield put({ type: USER_REQUEST_FAILED, payload: (error as Error).message })

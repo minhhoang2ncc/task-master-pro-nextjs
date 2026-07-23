@@ -5,14 +5,14 @@ import { z } from 'zod';
 export const UserSchema = z.object({
   id: z.string(),
   displayName: z.string(), // Expect the snake_case from the database
-  email: z.string().email(),
+  email: z.string(),
   role: z.string(),
 })
 
 export const UpdateUserPayloadSchema = z.object({
   id: z.string(),
   display_name: z.string().optional(),
-  email: z.string().email().optional(),
+  email: z.string().optional(),
   role: z.string().optional(),
   browser_notifications: z.boolean().optional(),
   email_notifications: z.boolean().optional(),
