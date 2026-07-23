@@ -3,7 +3,7 @@ import { z } from 'zod';
 // --- Zod Schemas ---
 
 export const UserSchema = z.object({
-  id: z.string().optional(),
+  id: z.string(),
   displayName: z.string(), // Expect the snake_case from the database
   email: z.string().email(),
   role: z.string(),
