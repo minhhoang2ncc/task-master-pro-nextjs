@@ -46,6 +46,10 @@ export async function fetchUser(id: string | number): Promise<UpdateUserPayload>
     displayName: 'User',
     email: '',
     role: '',
+    browserNotifications: true,
+    emailNotifications: true,
+    languageDisplay: ''
+
   }
 }
 
