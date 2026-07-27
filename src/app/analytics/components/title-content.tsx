@@ -1,5 +1,5 @@
 import { TimeRangeSelector } from "./time-range-selector";
-import { Button } from "@/shared/components/button";
+import { Button } from "@/libs/ui/components/src/shadcn/button";
 import { TEXT_SIZES } from "@/shared/styles/tailwind-classes";
 import { DownloadIcon } from "lucide-react";
 import { useState } from "react";

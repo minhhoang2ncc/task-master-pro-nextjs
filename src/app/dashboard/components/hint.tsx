@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/libs/ui/components/src/shadcn/card";
 import { Lightbulb } from "lucide-react";
 export function Hint(){
     return (

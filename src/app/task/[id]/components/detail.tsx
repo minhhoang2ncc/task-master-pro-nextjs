@@ -6,21 +6,21 @@ import dayjs from "dayjs"
 import { AlertCircle, Plus, X } from "lucide-react"
 
 // Shadcn UI Imports
-import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/card"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/dropdown-menu"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/select"
-import { Badge } from "@/shared/components/badge"
-import { Input } from "@/shared/components/input"
-import { Textarea } from "@/shared/components/textarea"
-import { Label } from "@/shared/components/label"
-import { Button } from "@/shared/components/button"
+import { Card, CardHeader, CardTitle, CardContent } from "@/libs/ui/components/src/shadcn/card"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/libs/ui/components/src/shadcn/dropdown-menu"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/libs/ui/components/src/shadcn/select"
+import { Badge } from "@/libs/ui/components/src/shadcn/badge"
+import { Input } from "@/libs/ui/components/src/shadcn/input"
+import { Textarea } from "@/libs/ui/components/src/shadcn/textarea"
+import { Label } from "@/libs/ui/components/src/shadcn/label"
+import { Button } from "@/libs/ui/components/src/shadcn/button"
 
 import { useDispatch } from "react-redux"
 import { TASK_DELETE_REQUESTED } from "@/redux/saga/taskSaga"
 import { useRouter } from "next/navigation"
 import type { TaskRecord } from "@/shared/types/task"
 import type { AppDispatch } from "@/redux/store"
-import { taskSchema, type TaskFormValues } from "@/shared/lib/schema/schema"
+import { taskSchema, type TaskFormValues } from "@/libs/zod/schema/schema"
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

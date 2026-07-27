@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/libs/ui/components/src/shadcn/card"
 import { Globe, ChevronRight, Lock } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/libs/ui/components/src/shadcn/dropdown-menu"
 import { useState } from "react"
-import { Button } from "@/shared/components/button"
+import { Button } from "@/libs/ui/components/src/shadcn/button"
 import type { AppLanguage, LanguageSettings } from "@/shared/types/setting"
 
 export function LanguageSecurity({

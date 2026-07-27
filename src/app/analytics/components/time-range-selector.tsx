@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from "react"
 import { useState } from "react"
 import { Calendar, ChevronRight } from "lucide-react"
-import { Button } from "@/shared/components/button";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/shared/components/dropdown-menu"
+import { Button } from "@/libs/ui/components/src/shadcn/button";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/libs/ui/components/src/shadcn/dropdown-menu"
 
 
 interface TimeRangeSelectorProps {

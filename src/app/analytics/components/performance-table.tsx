@@ -1,9 +1,9 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/table"
-import { Avatar, AvatarFallback } from "@/shared/components/avatar"
-import { Progress } from "@/shared/components/progress"
-import { Badge } from "@/shared/components/badge"
-import { Button } from "@/shared/components/button"
+import { Card, CardHeader, CardTitle, CardContent } from "@/libs/ui/components/src/shadcn/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/libs/ui/components/src/shadcn/table"
+import { Avatar, AvatarFallback } from "@/libs/ui/components/src/shadcn/avatar"
+import { Progress } from "@/libs/ui/components/src/shadcn/progress"
+import { Badge } from "@/libs/ui/components/src/shadcn/badge"
+import { Button } from "@/libs/ui/components/src/shadcn/button"
 import { MoreVertical } from "lucide-react"
 
 // Mock data with translated English text

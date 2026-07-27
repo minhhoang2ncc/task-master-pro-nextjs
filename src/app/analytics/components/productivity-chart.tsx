@@ -1,14 +1,14 @@
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/libs/ui/components/src/shadcn/card"
 import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/shared/components/chart"
+} from "@/libs/ui/components/src/shadcn/chart"
 
-import type { ChartConfig } from "@/shared/components/chart"
+import type { ChartConfig } from "@/libs/ui/components/src/shadcn/chart"
 const chartData = [
   { day: "Mon", newTasks: 30, completed: 20 },
   { day: "Tue", newTasks: 45, completed: 25 },

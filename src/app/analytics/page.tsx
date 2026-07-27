@@ -1,6 +1,6 @@
 "use client"
 
-import { TitleBar } from "@/shared/layouts/titlebar";
+import { TitleBar } from "@/libs/ui/components/src/titlebar";
 import { TitleContent } from "./components/title-content";
 import { SummaryTabs } from "./components/summary-tabs";
 import { WeeklyProductivityChart } from "./components/productivity-chart";

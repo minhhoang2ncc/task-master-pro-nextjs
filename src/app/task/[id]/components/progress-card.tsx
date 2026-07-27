@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/card"
-import { Progress } from "@/shared/components/progress"
+import { Card, CardContent, CardHeader, CardTitle } from "@/libs/ui/components/src/shadcn/card"
+import { Progress } from "@/libs/ui/components/src/shadcn/progress"
 import type { Subtask } from "@/shared/types/task"
 
 export function ProgressCard({ progress, subtasks }: { progress: number, subtasks: Subtask[] }) {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getAuthedClientOrUnauthorized } from '@/shared/lib/server-utils'
+import { getAuthedClientOrUnauthorized } from '@/libs/utils/src/server-utils'
 
 type RouteContext = { params: Promise<{ id: string }> }
 

@@ -1,8 +1,8 @@
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/shared/components/card"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/libs/ui/components/src/shadcn/card"
 import { Task } from "./task"
 
 import { ListFilter, SlidersHorizontal } from "lucide-react"
-import { Button } from "@/shared/components/button"
+import { Button } from "@/libs/ui/components/src/shadcn/button"
 import { useSelector } from "react-redux"
 import type { RootState } from "@/redux/store"
 import { useState, useMemo } from "react"

@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { AppSidebar } from "@/shared/layouts/app-sidebar";
-import { NavBar } from "@/shared/layouts/navbar";
-import { SidebarProvider, SidebarTrigger } from "@/shared/components/sidebar";
-import { getSession } from "@/shared/lib/server-session";
+import { AppSidebar } from "@/libs/ui/components/src/app-sidebar";
+import { NavBar } from "@/libs/ui/components/src/navbar";
+import { SidebarProvider, SidebarTrigger } from "@/libs/ui/components/src/shadcn/sidebar";
+import { getSession } from "@/libs/utils/src/server-session";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

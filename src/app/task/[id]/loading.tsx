@@ -1,5 +1,5 @@
-import { Skeleton } from "@/shared/components/skeleton";
-import { Card } from "@/shared/components/card";
+import { Skeleton } from "@/libs/ui/components/src/shadcn/skeleton";
+import { Card } from "@/libs/ui/components/src/shadcn/card";
 import { ChevronRight } from "lucide-react";
 
 export default function TaskDetailLoading() {

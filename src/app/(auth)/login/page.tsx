@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { login } from '@/app/actions/auth'
-import type { LoginFormState } from '@/shared/lib/schema/auth-schema'
+import type { LoginFormState } from '@/libs/zod/schema/auth-schema'
 import { Mail, Lock, LogIn, Loader2, Zap } from 'lucide-react'
 
 export default function LoginPage() {

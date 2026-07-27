@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { decrypt } from '@/shared/lib/session'
+import { decrypt } from '@/libs/utils/src/session'
 
 // Routes that require authentication
 const protectedRoutes = ['/dashboard', '/analytics', '/settings', '/task']

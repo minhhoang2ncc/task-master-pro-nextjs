@@ -1,11 +1,11 @@
 "use client"
 
-import { TitleBar } from "@/shared/layouts/titlebar"
+import { TitleBar } from "@/libs/ui/components/src/titlebar"
 import { SummaryTabs } from "./components/summary-tabs"
 import { TaskList } from "./components/task-list"
 import { TitleContent } from "./components/title-content"
 import { Hint } from "./components/hint"
-import { Button } from "@/shared/components/button"
+import { Button } from "@/libs/ui/components/src/shadcn/button"
 import { Plus } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useSelector } from "react-redux"

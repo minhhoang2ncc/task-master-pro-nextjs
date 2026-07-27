@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getSession } from '@/shared/lib/server-session'
+import { getSession } from '@/libs/utils/src/server-session'
 import { createAuthedClient } from '@/api/database/authed-client'
 import {
   createTaskInSupabase,

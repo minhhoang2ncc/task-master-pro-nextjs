@@ -4,13 +4,13 @@ import { redirect } from 'next/navigation'
 import bcrypt from 'bcryptjs'
 import { supabase } from '@/api/database/client'
 import { createAuthedClient } from '@/api/database/authed-client'
-import { createSession, deleteSession } from '@/shared/lib/server-session'
+import { createSession, deleteSession } from '@/libs/utils/src/server-session'
 import {
   SignupSchema,
   LoginSchema,
   type SignupFormState,
   type LoginFormState,
-} from '@/shared/lib/schema/auth-schema'
+} from '@/libs/zod/schema/auth-schema'
 
 // Re-export form state types so that pages can import them from one place.
 // export type { SignupFormState, LoginFormState }

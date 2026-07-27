@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Button } from "@/shared/components/button"
+import { Button } from "@/libs/ui/components/src/shadcn/button"
 
 export function SubTaskForm({
   open,

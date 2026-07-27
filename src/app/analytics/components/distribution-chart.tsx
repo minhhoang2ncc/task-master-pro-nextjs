@@ -1,8 +1,8 @@
 // src/modules/dashboard/components/TaskDistributionChart.tsx
 import { Label, Pie, PieChart } from "recharts"
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/shared/components/chart"
-import type { ChartConfig } from "@/shared/components/chart"
+import { Card, CardContent, CardHeader, CardTitle } from "@/libs/ui/components/src/shadcn/card"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/libs/ui/components/src/shadcn/chart"
+import type { ChartConfig } from "@/libs/ui/components/src/shadcn/chart"
 
 const chartData = [
   { category: "technical", value: 45, fill: "var(--color-technical)" },

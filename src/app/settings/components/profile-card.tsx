@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/card"
+import { Card, CardHeader, CardTitle, CardContent } from "@/libs/ui/components/src/shadcn/card"
 import { User } from "lucide-react"
 import type { User as UserType } from "@/shared/types/user"
 export function ProfileCard({

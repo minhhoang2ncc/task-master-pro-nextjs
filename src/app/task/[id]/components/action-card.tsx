@@ -1,6 +1,6 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/components/card"
-import { Button } from "@/shared/components/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/avatar"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/libs/ui/components/src/shadcn/card"
+import { Button } from "@/libs/ui/components/src/shadcn/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/libs/ui/components/src/shadcn/avatar"
 import { Save, TrashIcon, History } from "lucide-react"
 
 export function ActionCard({ lastUpdated, onSave, onDelete }: { lastUpdated: string; onSave?: () => void; onDelete?: () => void }) {

@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { signup } from '@/app/actions/auth'
-import type { SignupFormState } from '@/shared/lib/schema/auth-schema'
+import type { SignupFormState } from '@/libs/zod/schema/auth-schema'
 import { User, Mail, Lock, Briefcase, UserPlus, Loader2, Zap } from 'lucide-react'
 
 export default function SignupPage() {

@@ -1,6 +1,6 @@
-import { TitleBar } from "@/shared/layouts/titlebar";
-import { Skeleton } from "@/shared/components/skeleton";
-import { Card, CardContent } from "@/shared/components/card";
+import { TitleBar } from "@/libs/ui/components/src/titlebar";
+import { Skeleton } from "@/libs/ui/components/src/shadcn/skeleton";
+import { Card, CardContent } from "@/libs/ui/components/src/shadcn/card";
 
 export default function DashboardLoading() {
   return (

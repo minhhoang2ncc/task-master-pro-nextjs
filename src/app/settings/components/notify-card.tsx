@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/libs/ui/components/src/shadcn/card"
 import { Bell } from "lucide-react"
-import { Switch } from "@/shared/components/switch"
-import { Label } from "@/shared/components/label"
+import { Switch } from "@/libs/ui/components/src/shadcn/switch"
+import { Label } from "@/libs/ui/components/src/shadcn/label"
 import type { NotificationSettings } from "@/shared/types/setting"
 
 export function NotifyCard({
