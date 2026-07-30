@@ -18,5 +18,9 @@
   "packageManager": "npm@10.9.2",
   "engines": {
     "node": ">=18"
+  },
+  "optionalDependencies": {
+    "@tailwindcss/oxide-linux-x64-gnu": "*",
+    "lightningcss-linux-x64-gnu": "*"
   }
 }
