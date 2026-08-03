@@ -16,7 +16,6 @@ export interface RichTextEditorProps {
   value: string
   onChange: (html: string) => void
   placeholder?: string
-  /** "full" = all controls · "minimal" = bold / italic / strike only */
   variant?: "full" | "minimal"
   hasError?: boolean
   id?: string
@@ -24,7 +23,6 @@ export interface RichTextEditorProps {
 
 // ─── Utility ─────────────────────────────────────────────────────────────────
 
-/** Strip HTML tags — used for rendering plain-text previews */
 export function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").trim()
 }
@@ -192,11 +190,7 @@ export function RichTextEditor(props: RichTextEditorProps) {
   const [editing, setEditing] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
-  // If the user clicks something inside the toolbar (mousedown fires before blur),
-  // we must not collapse back to preview. The Editor's onMouseDown already calls
-  // preventDefault, so blur only fires when focus leaves the whole component.
   const handleBlur = () => {
-    // Use a small timeout so toolbar mousedown can cancel this if needed
     setTimeout(() => {
       if (wrapperRef.current && !wrapperRef.current.contains(document.activeElement)) {
         setEditing(false)
