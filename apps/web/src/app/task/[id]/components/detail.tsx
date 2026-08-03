@@ -7,14 +7,13 @@ import dayjs from "dayjs"
 import { AlertCircle, FileText, ImageIcon, FileIcon, Plus, X, Paperclip, Trash2 } from "lucide-react"
 
 // Shadcn UI Imports
-import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui"
+import { Card, CardHeader, CardTitle, CardContent, Input } from "@repo/ui"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@repo/ui"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui"
 import { Badge } from "@repo/ui"
-import { Input } from "@repo/ui"
-import { Textarea } from "@repo/ui"
 import { Label } from "@repo/ui"
 import { Button } from "@repo/ui"
+import { RichTextEditor } from "@repo/ui"
 
 import { useDispatch } from "react-redux"
 import { TASK_DELETE_REQUESTED } from "@/redux/saga/taskSaga"
@@ -169,14 +168,19 @@ export function Detail({
           {/* ── Title ── */}
           <div className="space-y-1.5">
             <Label htmlFor="detail-title">Title</Label>
-            <Input
-              id="detail-title"
-              type="text"
-              placeholder="Enter task title"
-              aria-invalid={!!errors.title}
-              aria-describedby={errors.title ? "detail-title-error" : undefined}
-              className={errors.title ? "border-red-400 bg-red-50 focus-visible:ring-red-400" : ""}
-              {...register("title")}
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <RichTextEditor
+                  id="detail-title"
+                  variant="minimal"
+                  placeholder="Enter task title"
+                  value={field.value}
+                  onChange={field.onChange}
+                  hasError={!!errors.title}
+                />
+              )}
             />
             {errors.title && (
               <p id="detail-title-error" role="alert" className="flex items-center gap-1 text-xs text-red-600">
@@ -189,13 +193,19 @@ export function Detail({
           {/* ── Description ── */}
           <div className="space-y-1.5">
             <Label htmlFor="detail-description">Description</Label>
-            <Textarea
-              id="detail-description"
-              placeholder="Provide details about this task..."
-              aria-invalid={!!errors.description}
-              aria-describedby={errors.description ? "detail-description-error" : undefined}
-              className={`resize-none h-24 ${errors.description ? "border-red-400 bg-red-50 focus-visible:ring-red-400" : ""}`}
-              {...register("description")}
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <RichTextEditor
+                  id="detail-description"
+                  variant="full"
+                  placeholder="Provide details about this task..."
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  hasError={!!errors.description}
+                />
+              )}
             />
             {errors.description && (
               <p id="detail-description-error" role="alert" className="flex items-center gap-1 text-xs text-red-600">

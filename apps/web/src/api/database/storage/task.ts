@@ -1,11 +1,3 @@
-/**
- * Client-safe upload helper.
- *
- * Authentication is handled on the server side via the `/api/storage/upload`
- * App Router route handler, which reads the session cookie and builds the
- * authenticated Supabase client. This means we never touch server-only APIs
- * (next/headers, cookies()) from a Client Component.
- */
 export async function uploadFile(file: File, taskId: string) {
   const formData = new FormData()
   formData.append('file', file)

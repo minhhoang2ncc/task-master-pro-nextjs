@@ -2,7 +2,27 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
+@plugin "@tailwindcss/typography";
 
+/* ── Tiptap / ProseMirror editor overrides ────────────────────────────────── */
+.ProseMirror ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+}
+.ProseMirror ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+}
+.ProseMirror li {
+  display: list-item !important;
+}
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: oklch(0.556 0 0);
+  float: left;
+  pointer-events: none;
+  height: 0;
+}
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

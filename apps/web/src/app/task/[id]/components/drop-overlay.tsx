@@ -52,7 +52,6 @@ export function DropOverlay({ taskId, onUploadSuccess }: { taskId: string; onUpl
     if (!fileList || fileList.length === 0) return
     const incoming: FileEntry[] = Array.from(fileList).map((file) => ({ file, status: "pending" }))
     setEntries((prev) => {
-      // Deduplicate by name
       const existingNames = new Set(prev.map((e) => e.file.name))
       const fresh = incoming.filter((e) => !existingNames.has(e.file.name))
       return [...prev, ...fresh]
@@ -72,7 +71,6 @@ export function DropOverlay({ taskId, onUploadSuccess }: { taskId: string; onUpl
 
     setOverlayStatus("uploading")
 
-    // Upload all pending files in parallel, tracking each file's status
     await Promise.all(
       pending.map(async (entry) => {
         setEntries((prev) =>
@@ -143,10 +141,10 @@ export function DropOverlay({ taskId, onUploadSuccess }: { taskId: string; onUpl
   const hasPending = entries.some((e) => e.status === "pending")
 
   const statusBadge: Record<FileStatus, { label: string; cls: string }> = {
-    pending:   { label: "Ready",      cls: "bg-gray-100 text-gray-500" },
+    pending: { label: "Ready", cls: "bg-gray-100 text-gray-500" },
     uploading: { label: "Uploading…", cls: "bg-blue-100 text-blue-600 animate-pulse" },
-    success:   { label: "Done",       cls: "bg-emerald-100 text-emerald-600" },
-    error:     { label: "Failed",     cls: "bg-red-100 text-red-500" },
+    success: { label: "Done", cls: "bg-emerald-100 text-emerald-600" },
+    error: { label: "Failed", cls: "bg-red-100 text-red-500" },
   }
 
   return (
@@ -175,9 +173,8 @@ export function DropOverlay({ taskId, onUploadSuccess }: { taskId: string; onUpl
 
           {/* Drop zone */}
           <div
-            className={`flex flex-col items-center justify-center py-12 px-4 border-2 border-dashed rounded-lg mb-4 transition-colors ${
-              isDragging ? "border-blue-500 bg-blue-50" : "border-blue-300 bg-[#f8fbff]"
-            }`}
+            className={`flex flex-col items-center justify-center py-12 px-4 border-2 border-dashed rounded-lg mb-4 transition-colors ${isDragging ? "border-blue-500 bg-blue-50" : "border-blue-300 bg-[#f8fbff]"
+              }`}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault()

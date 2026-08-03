@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader } from "@repo/ui"
 import { Checkbox } from "@repo/ui"
 import { Button } from "@repo/ui"
+import { stripHtml } from "@repo/ui"
 import { GripVertical, Plus, Network, TrashIcon } from "lucide-react"
 import type { Subtask, TaskRecord } from "@repo/types"
 import { useEffect, useState, useRef } from "react"
@@ -107,18 +108,16 @@ export function SubtasksCard({
             />
 
             {/* Task Title with Dynamic Styling */}
-            <span
-              className={`text-base flex-1 ${task.completed
-                ? "text-slate-500 line-through"
-                : "text-slate-700"
-                }`}
-            >
-              {task.title}
-            </span>
+            <div
+              className={`prose prose-sm max-w-none flex-1 [&_p]:my-0 ${
+                task.completed ? "text-slate-500 line-through" : "text-slate-700"
+              }`}
+              dangerouslySetInnerHTML={{ __html: task.title }}
+            />
 
             <button
               type="button"
-              aria-label={`Remove ${task.title}`}
+              aria-label={`Remove ${stripHtml(task.title)}`}
               className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
               onClick={() => {
                 handleDeleteSubtask(task.id)

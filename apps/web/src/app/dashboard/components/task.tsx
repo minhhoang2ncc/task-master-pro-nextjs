@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Checkbox } from "@repo/ui"
 import { Badge } from "@repo/ui"
 import { Avatar, AvatarImage, AvatarFallback } from "@repo/ui"
+import { stripHtml } from "@repo/ui"
 import { Calendar, CheckCheck } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { BADGE, PRIORITY } from "@/shared/styles/tailwind-classes"
@@ -42,7 +43,7 @@ export function Task({ id, Title, Priority, DueDate, status }: { id: string | nu
 
       <section className="flex flex-col gap-1.5 flex-1 cursor-pointer" onClick={handleTaskClick}>
         <span className={`text-base dark:text-white font-medium ${isCompleted ? "text-slate-400 line-through" : "text-slate-900"}`}>
-          {Title}
+          {stripHtml(Title)}
         </span>
 
         <div className="flex items-center gap-3">

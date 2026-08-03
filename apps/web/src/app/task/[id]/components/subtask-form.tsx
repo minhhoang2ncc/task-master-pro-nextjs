@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Button } from "@repo/ui"
+import { RichTextEditor } from "@repo/ui"
 
 export function SubTaskForm({
   open,
@@ -22,11 +23,12 @@ export function SubTaskForm({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const nextTitle = title.trim()
+    // Strip HTML tags to get plain-text length for the empty check,
+    // but pass the full HTML value to the parent.
+    const plainText = title.replace(/<[^>]*>/g, "").trim()
+    if (!plainText) return
 
-    if (!nextTitle) return
-
-    onSubmit(nextTitle)
+    onSubmit(title)
     onOpenChange(false)
     setTitle("")
   }
@@ -59,15 +61,12 @@ export function SubTaskForm({
           <label htmlFor="subtask-title" className="text-sm font-semibold text-gray-700">
             Title
           </label>
-          <input
-            type="text"
+          <RichTextEditor
             id="subtask-title"
-            name="subtask-title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            variant="minimal"
             placeholder="Enter subtask title"
+            value={title}
+            onChange={setTitle}
           />
         </div>
 

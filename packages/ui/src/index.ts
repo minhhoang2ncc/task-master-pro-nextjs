@@ -1,4 +1,5 @@
 // Shadcn primitive components
+export * from "./tiptap/rich-text-editor"
 export * from "./shadcn/avatar"
 export * from "./shadcn/badge"
 export * from "./shadcn/button"

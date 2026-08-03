@@ -4,13 +4,11 @@ import { createAuthedClient } from '@/api/database/authed-client'
 import { nativeFileSchema } from '@repo/types/schemas'
 
 export async function POST(req: Request) {
-  // Retrieve the session on the server — this is safe here (App Router Route Handler)
   const session = await getSession()
   if (!session?.accessToken) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Parse the multipart/form-data body
   let formData: FormData
   try {
     formData = await req.formData()
@@ -38,7 +36,6 @@ export async function POST(req: Request) {
 
   const parsedFile = result.data
 
-  // Upload to Supabase using the authenticated client (accessToken satisfies RLS)
   const client = createAuthedClient(session.accessToken)
   const { data, error } = await client.storage
     .from('task')
