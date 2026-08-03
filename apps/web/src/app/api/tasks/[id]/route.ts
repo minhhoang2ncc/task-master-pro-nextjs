@@ -84,6 +84,18 @@ export async function DELETE(_req: Request, { params }: RouteContext) {
   const { client, userId, unauthorized } = await getAuthedClientOrUnauthorized()
   if (!client || !userId) return unauthorized!
 
+  // ── 1. Remove all files stored under this task's folder ──────────────────
+  const { data: storageFiles } = await client.storage.from('task').list(id)
+  if (storageFiles && storageFiles.length > 0) {
+    const paths = storageFiles.map((f) => `${id}/${f.name}`)
+    const { error: storageError } = await client.storage.from('task').remove(paths)
+    if (storageError) {
+      // Log but don't abort — task deletion should still proceed
+      console.warn(`[api/tasks] DELETE [${id}] - storage cleanup failed:`, storageError.message)
+    }
+  }
+
+  // ── 2. Delete the task row ────────────────────────────────────────────────
   const { error } = await deleteTaskFromSupabase(id, userId, client)
 
   if (error) {

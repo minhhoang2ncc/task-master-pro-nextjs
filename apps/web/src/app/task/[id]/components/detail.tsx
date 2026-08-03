@@ -1,9 +1,10 @@
 "use no memo"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
+import { deleteFile } from "@/api/database/storage/task"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import dayjs from "dayjs"
-import { AlertCircle, Plus, X } from "lucide-react"
+import { AlertCircle, FileText, ImageIcon, FileIcon, Plus, X, Paperclip, Trash2 } from "lucide-react"
 
 // Shadcn UI Imports
 import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui"
@@ -41,10 +42,14 @@ const TAG_LIST = [
 
 export function Detail({
   task,
+  files,
+  onDeleteSuccess,
   modifyRegister,
   deleteRegister,
 }: {
   task: TaskRecord | undefined
+  files: { name: string; publicUrl: string; metadata?: { mimetype?: string } }[]
+  onDeleteSuccess?: () => void
   modifyRegister?: (getter: () => TaskRecord | undefined) => void
   deleteRegister?: (handler: () => void) => void
 }) {
@@ -54,6 +59,22 @@ export function Detail({
   const [tags, setTags] = useState<{ name: string; color: string }[]>(task?.tags ?? [])
   const tagsRef = useRef(tags)
   tagsRef.current = tags
+
+  const [deletingFile, setDeletingFile] = useState<string | null>(null)
+
+  const handleDeleteFile = useCallback(async (fileName: string) => {
+    if (!task?.id) return
+    setDeletingFile(fileName)
+    try {
+      await deleteFile(fileName, task.id as string)
+      onDeleteSuccess?.()
+    } catch (err) {
+      console.error('[Detail] delete file failed:', err)
+    } finally {
+      setDeletingFile(null)
+    }
+  }, [task?.id, onDeleteSuccess])
+
 
   const {
     register,
@@ -112,6 +133,11 @@ export function Detail({
         ? prev.filter((t) => t.name !== tag.name)
         : [...prev, tag]
     )
+  }
+
+  const openDialog = () => {
+    const dragDialog = document.getElementById("dragDialog") as HTMLDialogElement
+    dragDialog.showModal()
   }
 
   return (
@@ -278,6 +304,52 @@ export function Detail({
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+          </div>
+
+          {/* ── Attachments ── */}
+          <div className="space-y-3 pt-2">
+            <Label className="flex items-center gap-1.5">
+              <Paperclip className="w-3.5 h-3.5" />
+              Attachments
+              <Button variant="outline" size="sm" className="h-7 border-dashed gap-1 text-xs" onClick={openDialog}>+ Insert</Button>
+            </Label>
+            {files.length === 0 ? (
+              <p className="text-xs text-muted-foreground">No files uploaded yet.</p>
+            ) : (
+              <ul className="flex flex-col gap-1.5">
+                {files.map((file) => {
+                  const mime = file.metadata?.mimetype ?? ''
+                  const Icon = mime.startsWith('image/')
+                    ? ImageIcon
+                    : mime === 'application/pdf'
+                      ? FileText
+                      : FileIcon
+                  return (
+                    <li key={file.name} className="flex items-center gap-2 text-sm group">
+                      <Icon className="w-4 h-4 shrink-0 text-muted-foreground" />
+                      <a
+                        href={file.publicUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="truncate flex-1 text-blue-600 hover:underline"
+                        title={file.name}
+                      >
+                        {file.name}
+                      </a>
+                      <button
+                        type="button"
+                        aria-label={`Delete ${file.name}`}
+                        disabled={deletingFile === file.name}
+                        onClick={() => handleDeleteFile(file.name)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-50 text-muted-foreground hover:text-red-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
           </div>
         </form>
       </CardContent>

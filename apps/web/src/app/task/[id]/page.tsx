@@ -3,8 +3,9 @@
 import { Detail } from "./components/detail"
 import { SubtasksCard } from "./components/sub-task"
 import { SubTaskForm } from "./components/subtask-form"
+import { DropOverlay } from "./components/drop-overlay"
 import { ChevronRight } from "lucide-react"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { ActionCard } from "./components/action-card"
 import { ProgressCard } from "./components/progress-card"
 import { useSelector, useDispatch } from "react-redux"
@@ -33,6 +34,21 @@ export default function TaskDetailPage() {
 
   const dispatch = useDispatch()
 
+  // ── File list ────────────────────────────────────────────────────────────
+  const [files, setFiles] = useState<{ name: string; publicUrl: string; metadata?: { mimetype?: string } }[]>([])
+
+  const fetchFiles = useCallback(() => {
+    if (!taskId) return
+    fetch(`/api/storage/files?taskId=${taskId}`)
+      .then((res) => res.ok ? res.json() : null)
+      .then((body) => { if (body?.files) setFiles(body.files) })
+      .catch(() => { })
+  }, [taskId])
+
+  useEffect(() => {
+    fetchFiles()
+  }, [fetchFiles])
+
   const modifyTaskHandlerRef = useRef<(() => TaskRecord | undefined) | undefined>(undefined)
   const deleteTaskHandlerRef = useRef<(() => void) | undefined>(undefined)
 
@@ -60,7 +76,7 @@ export default function TaskDetailPage() {
   }
 
   return (
-    <section className="mx-auto max-w-6xl px-4">
+    <section className="mx-auto max-w-6xl px-4 flex flex-col items-start justify-center">
       <div className="flex items-center gap-1 text-muted-foreground m-4">
         <p className="text-sm">My Task</p>
         <ChevronRight className="w-4 h-4 inline-block" />
@@ -71,6 +87,8 @@ export default function TaskDetailPage() {
         <div className="flex flex-col gap-4 row-span-2">
           <Detail
             task={task}
+            files={files}
+            onDeleteSuccess={fetchFiles}
             modifyRegister={(handler) => { modifyTaskHandlerRef.current = handler }}
             deleteRegister={(handler) => { deleteTaskHandlerRef.current = handler }}
           />
@@ -94,6 +112,9 @@ export default function TaskDetailPage() {
         onOpenChange={setIsSubtaskFormOpen}
         onSubmit={(title) => handleAddSubtaskRef.current?.(title)}
       />
+
+      {/* Global drag-and-drop overlay for file uploads */}
+      <DropOverlay taskId={taskId ?? ''} onUploadSuccess={fetchFiles} />
     </section>
   )
 }
