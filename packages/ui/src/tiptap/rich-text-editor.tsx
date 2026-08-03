@@ -210,28 +210,37 @@ export function RichTextEditor(props: RichTextEditorProps) {
     <div ref={wrapperRef}>
       {editing ? (
         <Editor {...props} onBlur={handleBlur} />
-      ) : (
-        /* ── Preview / placeholder ── */
+      ) : isEmpty ? (
+        /* ── Preview: empty / placeholder ── */
         <div
           role="button"
           tabIndex={0}
           onClick={() => setEditing(true)}
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setEditing(true) }}
           className={[
-            "prose prose-sm dark:prose-invert max-w-none min-h-[38px] px-3 py-2 rounded-md border text-sm cursor-text",
-            "prose-p:my-0 prose-ul:my-0 prose-ol:my-0 prose-li:my-0",
+            "rte-preview prose prose-sm dark:prose-invert max-w-none min-h-[38px] px-3 py-2 rounded-md border text-sm cursor-text",
             "hover:border-input/80 transition-colors",
             hasError ? "border-red-400" : "border-transparent",
           ].join(" ")}
         >
-          {isEmpty ? (
-            <span className="text-muted-foreground">
-              {placeholder ?? "Click to edit…"}
-            </span>
-          ) : (
-            <div dangerouslySetInnerHTML={{ __html: value }} />
-          )}
+          <span className="text-muted-foreground">
+            {placeholder ?? "Click to edit…"}
+          </span>
         </div>
+      ) : (
+        /* ── Preview: has content ── */
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => setEditing(true)}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setEditing(true) }}
+          className={[
+            "rte-preview prose prose-sm dark:prose-invert max-w-none min-h-[38px] px-3 py-2 rounded-md border text-sm cursor-text",
+            "hover:border-input/80 transition-colors",
+            hasError ? "border-red-400" : "border-transparent",
+          ].join(" ")}
+          dangerouslySetInnerHTML={{ __html: value }}
+        />
       )}
     </div>
   )

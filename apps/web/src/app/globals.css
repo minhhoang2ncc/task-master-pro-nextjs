@@ -5,16 +5,26 @@
 @plugin "@tailwindcss/typography";
 
 /* ── Tiptap / ProseMirror editor overrides ────────────────────────────────── */
-.ProseMirror ul {
+.ProseMirror ul,
+.rte-preview ul {
   list-style-type: disc !important;
   padding-left: 1.5rem !important;
+  overflow: visible !important;
 }
-.ProseMirror ol {
+.ProseMirror ol,
+.rte-preview ol {
   list-style-type: decimal !important;
   padding-left: 1.5rem !important;
+  overflow: visible !important;
 }
-.ProseMirror li {
+.ProseMirror li,
+.rte-preview li {
   display: list-item !important;
+  overflow: visible !important;
+}
+/* Ensure the preview wrapper never clips markers */
+.rte-preview {
+  overflow: visible !important;
 }
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
