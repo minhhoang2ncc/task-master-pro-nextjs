@@ -26,11 +26,20 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  // Attach a public URL to each file
-  const files = (data ?? []).map((file) => {
-    const { data: urlData } = client.storage.from('task').getPublicUrl(`${taskId}/${file.name}`)
-    return { ...file, publicUrl: urlData.publicUrl }
-  })
+  // Generate signed URLs for each file (private bucket — 1 hour expiry)
+  const files = await Promise.all(
+    (data ?? []).map(async (file) => {
+      const { data: signedData, error: signedError } = await client.storage
+        .from('task')
+        .createSignedUrl(`${taskId}/${file.name}`, 60 * 60)
+
+      if (signedError) {
+        console.error('[api/storage/files] signed URL error:', signedError.message)
+      }
+
+      return { ...file, publicUrl: signedData?.signedUrl ?? '' }
+    })
+  )
 
   return NextResponse.json({ files })
 }
