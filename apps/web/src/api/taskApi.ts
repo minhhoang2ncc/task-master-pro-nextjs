@@ -20,11 +20,10 @@ export async function postCreateTask(payload: TaskRecord, _userId: string): Prom
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      ...payload,
+      ...serializeTask(payload),
       creator_id: _userId
     }),
   })
-  console.log(payload)
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
     const message = err?.error ?? `Failed to create task (${res.status})`
@@ -41,7 +40,7 @@ export async function postSaveTask(payload: TaskRecord, _userId: string): Promis
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      ...payload,
+      ...serializeTask(payload),
       creator_id: _userId
     }),
   })

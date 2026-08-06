@@ -7,7 +7,8 @@ import { Calendar, CheckCheck } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { BADGE, PRIORITY } from "@/shared/styles/tailwind-classes"
 import { useDispatch, useSelector } from "react-redux"
-import { modify } from '@/redux/slices/taskSlice';
+import { TASK_SAVE_REQUESTED } from "@/redux/saga/taskSaga"
+
 import type { RootState } from "@/redux/store"
 import type { Dayjs } from "dayjs"
 import dayjs from "dayjs"
@@ -25,14 +26,17 @@ export function Task({ id, Title, Priority, DueDate, status }: { id: string | nu
 
   const handleCheckboxClick = (checked: boolean) => {
     if (!fullTask) return
-    dispatch(modify({
+    const updated = {
       ...fullTask,
       status: checked ? 'completed' : 'pending'
-    }))
+    } as typeof fullTask
+    dispatch({ type: TASK_SAVE_REQUESTED, payload: updated })
   }
-
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData("text/plain", e.currentTarget.id);
+  }
   return (
-    <div className={`flex items-center gap-4 p-5 border-b last:border-b relative transition-colors ${isHighlighted ? "border-l-2 border-l-indigo-500 dark:border-l-yellow-400" : ""
+    <div id={id as string} draggable="true" onDragStart={handleDragStart} className={`flex items-center gap-4 p-5 border-b last:border-b relative transition-colors ${isHighlighted ? "border-l-2 border-l-indigo-500 dark:border-l-yellow-400" : ""
       }`} onMouseEnter={() => setIsHighlighted(true)} onMouseLeave={() => setIsHighlighted(false)}>
 
       <Checkbox

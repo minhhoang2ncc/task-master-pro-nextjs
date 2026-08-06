@@ -12,6 +12,7 @@ export function TitleContent({ name, numTask, taskFilter, setTaskFilter }: { nam
       <Tabs value={taskFilter} onValueChange={setTaskFilter}>
         <TabsList className={TABS_LAYOUT.default}>
           <TabsTrigger value="all" className={TABS_LAYOUT.trigger}>All</TabsTrigger>
+          <TabsTrigger value="todo" className={TABS_LAYOUT.trigger}>To Do</TabsTrigger>
           <TabsTrigger value="pending" className={TABS_LAYOUT.trigger}>In Progress</TabsTrigger>
           <TabsTrigger value="completed" className={TABS_LAYOUT.trigger}>Completed</TabsTrigger>
         </TabsList>

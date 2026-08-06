@@ -1,5 +1,4 @@
 "use client"
-
 import { TitleBar } from "@/libs/ui/components/src/titlebar"
 import { SummaryTabs } from "./components/summary-tabs"
 import { TaskList } from "./components/task-list"
@@ -12,11 +11,11 @@ import { useSelector } from "react-redux"
 import type { RootState } from "@/redux/store"
 
 export default function DashboardPage() {
+  const filterList = ['todo', 'pending', 'completed']
   const [mounted, setMounted] = useState(false)
   useEffect(() => {
     setMounted(true)
   }, [])
-
   const user = useSelector((state: RootState) => state.user)
   const tasks = useSelector((state: RootState) => state.tasks)
   const [taskFilter, setTaskFilter] = useState<string>("all")
@@ -32,10 +31,26 @@ export default function DashboardPage() {
       </TitleBar>
       <div className="flex flex-col gap-4 p-4 w-full h-fit">
         <SummaryTabs />
-        <TaskList filter={taskFilter} />
+        {taskFilter === "all" ? (
+
+          <div className="grid grid-cols-3 gap-4">
+            {filterList.map((value, index) => {
+              const title = value.charAt(0).toUpperCase() + value.slice(1)
+              return (
+                <div key={index} className="flex flex-col gap-2">
+                  <h3 className="text-sm font-semibold text-muted-foreground">
+                    {title}
+                  </h3>
+                  <TaskList filter={value} />
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          <TaskList filter={taskFilter} />
+        )}
         <Hint />
       </div>
-
       <Button
         size="icon"
         onClick={() => (document.getElementById('inputDialog') as HTMLDialogElement)?.showModal()}
@@ -43,6 +58,6 @@ export default function DashboardPage() {
       >
         <Plus className="w-8 h-8 text-white" strokeWidth={3} />
       </Button>
-    </section>
+    </section >
   )
 }

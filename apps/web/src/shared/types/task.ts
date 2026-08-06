@@ -1,6 +1,6 @@
 import type { Dayjs } from "dayjs"
 
-export type Status = 'completed' | 'pending' | 'cancelled'
+export type Status = 'completed' | 'pending' | 'cancelled' | 'todo'
 
 export interface Subtask {
   id: string | number

@@ -6,6 +6,7 @@ import store, { type RootState } from "@/redux/store"
 import { TASK_FETCH_ALL_REQUESTED } from "@/redux/saga/taskSaga"
 import { USER_FETCH_REQUESTED } from "@/redux/saga/userSaga"
 import { TaskForm } from "@/libs/ui/components/src/task-form"
+import { MinimizedTaskForm } from "@/libs/ui/components/src/minimized-task-form"
 import { UserForm } from "@/libs/ui/components/src/user-form"
 import type { TaskRecord } from "@repo/types"
 import dayjs from "dayjs"
@@ -222,6 +223,7 @@ function GlobalModals() {
   return (
     <>
       <TaskForm task={draftTask} />
+      <MinimizedTaskForm task={draftTask} />
       <UserForm />
     </>
   )

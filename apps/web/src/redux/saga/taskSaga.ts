@@ -78,14 +78,11 @@ function* createTaskSaga(action: PayloadAction<TaskRecord>) {
 }
 
 function* saveTaskSaga(action: PayloadAction<TaskRecord>) {
-  // Optimistically apply local changes so the UI stays snappy
   yield put(modify(action.payload))
   try {
     const userId: string | undefined = yield call(getUserId)
     if (!userId) return
-    // Persist to Supabase and get the server-confirmed record (includes synced subtasks)
     const confirmed: TaskRecord = yield call(postSaveTask, action.payload, userId)
-    // Replace the local record with the authoritative server copy
     yield put(upsertTask(confirmed))
   } catch (error) {
     yield put({ type: TASK_REQUEST_FAILED, payload: (error as Error).message })

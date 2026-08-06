@@ -9,7 +9,7 @@ import { useEffect, useState, useRef, useCallback } from "react"
 import { ActionCard } from "./components/action-card"
 import { ProgressCard } from "./components/progress-card"
 import { useSelector, useDispatch } from "react-redux"
-import { modify } from "@/redux/slices/taskSlice"
+
 import type { Subtask, TaskRecord } from "@repo/types"
 import { useParams } from "next/navigation"
 import type { RootState } from "@/redux/store"
@@ -64,7 +64,6 @@ export default function TaskDetailPage() {
       subtasks: childSubtasks ?? taskData.subtasks ?? []
     }
 
-    dispatch(modify(merged))
     dispatch({ type: TASK_SAVE_REQUESTED, payload: merged })
   }
 
