@@ -68,6 +68,7 @@ export default function LoginPage() {
                   autoComplete="email"
                   required
                   placeholder="you@example.com"
+                  defaultValue={state?.fields?.email ?? ''}
                   aria-describedby="login-email-error"
                   className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder:text-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:border-indigo-500/40 transition-all"
                 />

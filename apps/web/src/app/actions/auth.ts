@@ -22,15 +22,19 @@ export async function signup(
   formData: FormData,
 ): Promise<SignupFormState> {
 
+  const rawFields = {
+    displayName: formData.get('displayName') as string,
+    email: formData.get('email') as string,
+    role: formData.get('role') as string,
+  }
+
   // 1. Validate fields
   const result = SignupSchema.safeParse({
-    displayName: formData.get('displayName'),
-    email: formData.get('email'),
+    ...rawFields,
     password: formData.get('password'),
-    role: formData.get('role'),
   })
   if (!result.success) {
-    return { errors: result.error.flatten().fieldErrors }
+    return { errors: result.error.flatten().fieldErrors, fields: rawFields }
   }
 
   const { displayName, email, password, role } = result.data
@@ -48,7 +52,7 @@ export async function signup(
   })
 
   if (authError || !authData.user) {
-    return { message: authError?.message ?? 'Failed to create account. Please try again.' }
+    return { message: authError?.message ?? 'Failed to create account. Please try again.', fields: rawFields }
   }
 
   const userId = authData.user.id
@@ -97,14 +101,18 @@ export async function login(
   _state: LoginFormState,
   formData: FormData,
 ): Promise<LoginFormState> {
+  const rawFields = {
+    email: formData.get('email') as string,
+  }
+
   // 1. Validate fields
   const result = LoginSchema.safeParse({
-    email: formData.get('email'),
+    ...rawFields,
     password: formData.get('password'),
   })
 
   if (!result.success) {
-    return { errors: result.error.flatten().fieldErrors }
+    return { errors: result.error.flatten().fieldErrors, fields: rawFields }
   }
 
   const { email, password } = result.data
@@ -116,7 +124,7 @@ export async function login(
   })
 
   if (authError || !authData.user) {
-    return { message: 'Invalid email or password.' }
+    return { message: 'Invalid email or password.', fields: rawFields }
   }
 
   // 3. Create session cookie

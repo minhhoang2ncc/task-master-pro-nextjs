@@ -66,6 +66,7 @@ export default function SignupPage() {
                   autoComplete="name"
                   required
                   placeholder="Nguyễn Văn A"
+                  defaultValue={state?.fields?.displayName ?? ''}
                   aria-describedby="signup-name-error"
                   className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder:text-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/60 focus:border-purple-500/40 transition-all"
                 />
@@ -91,6 +92,7 @@ export default function SignupPage() {
                   autoComplete="email"
                   required
                   placeholder="you@example.com"
+                  defaultValue={state?.fields?.email ?? ''}
                   aria-describedby="signup-email-error"
                   className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder:text-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/60 focus:border-purple-500/40 transition-all"
                 />
@@ -116,6 +118,7 @@ export default function SignupPage() {
                   autoComplete="organization-title"
                   required
                   placeholder="e.g. Frontend Engineer"
+                  defaultValue={state?.fields?.role ?? ''}
                   aria-describedby="signup-role-error"
                   className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder:text-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/60 focus:border-purple-500/40 transition-all"
                 />

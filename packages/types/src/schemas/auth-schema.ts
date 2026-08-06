@@ -36,6 +36,11 @@ export type SignupFormState =
         role?: string[]
       }
       message?: string
+      fields?: {
+        displayName?: string
+        email?: string
+        role?: string
+      }
     }
   | undefined
 
@@ -46,5 +51,8 @@ export type LoginFormState =
         password?: string[]
       }
       message?: string
+      fields?: {
+        email?: string
+      }
     }
   | undefined
