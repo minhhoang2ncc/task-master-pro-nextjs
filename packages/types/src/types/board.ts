@@ -6,3 +6,7 @@ export type ColumnConfig = {
   colorName: string
 }
 
+export interface BoardFilters {
+  dateRange: "all" | "today" | "week" | "overdue"
+  priority: string[] // [] = no filter
+}

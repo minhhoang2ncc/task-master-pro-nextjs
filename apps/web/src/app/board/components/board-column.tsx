@@ -8,6 +8,7 @@ import { BoardCard } from "./board-card"
 import { TASK_CREATE_REQUESTED, TASK_SAVE_REQUESTED } from "@/redux/saga/taskSaga"
 import type { AppDispatch, RootState } from "@/redux/store"
 import type { TaskRecord, Status, ColumnConfig } from "@repo/types"
+import type { BoardFilters } from "@repo/types"
 
 const COLOR_STYLES = {
   slate: {
@@ -40,9 +41,10 @@ type ColorName = keyof typeof COLOR_STYLES
 
 interface BoardColumnProps {
   column: ColumnConfig
+  filters: BoardFilters
 }
 
-export function BoardColumn({ column }: BoardColumnProps) {
+export function BoardColumn({ column, filters }: BoardColumnProps) {
   const dispatch = useDispatch<AppDispatch>()
   const taskList = useSelector((state: RootState) => state.tasks)
   const [dragCounter, setDragCounter] = useState(0)
@@ -51,10 +53,23 @@ export function BoardColumn({ column }: BoardColumnProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const c = COLOR_STYLES[column.colorName as ColorName] ?? COLOR_STYLES.slate
-  const columnTasks = taskList.filter((task) => task.status === column.id)
+
+  const columnTasks = taskList
+    .filter((task) => task.status === column.id)
+    .filter((task) => {
+      const due = dayjs(task.dueDate as any)
+      const today = dayjs().startOf("day")
+      if (filters.dateRange === "overdue") return due.isBefore(today)
+      if (filters.dateRange === "today") return due.isSame(today, "day")
+      if (filters.dateRange === "week") return due.isBefore(today.add(7, "day")) && !due.isBefore(today)
+      return true
+    })
+    .filter((task) =>
+      filters.priority.length === 0 || filters.priority.includes(task.priority)
+    )
+
   const isDraggedOver = dragCounter > 0
 
-  // Auto-focus the textarea when the inline form opens
   useEffect(() => {
     if (isAdding) textareaRef.current?.focus()
   }, [isAdding])
