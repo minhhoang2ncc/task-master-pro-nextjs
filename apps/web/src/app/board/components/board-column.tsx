@@ -7,16 +7,36 @@ import dayjs from "dayjs"
 import { BoardCard } from "./board-card"
 import { TASK_CREATE_REQUESTED, TASK_SAVE_REQUESTED } from "@/redux/saga/taskSaga"
 import type { AppDispatch, RootState } from "@/redux/store"
-import type { TaskRecord, Status } from "@repo/types"
+import type { TaskRecord, Status, ColumnConfig } from "@repo/types"
 
-interface ColumnConfig {
-  id: Status | "cancelled"
-  label: string
-  color: string
-  dotColor: string
-  bgColor: string
-  borderColor: string
-}
+const COLOR_STYLES = {
+  slate: {
+    bg: "rgba(248,250,252,0.6)",
+    bgDark: "rgba(15,23,42,0.2)",
+    dot: "#94a3b8",
+    border: "#94a3b8",
+    badgeBg: "#f1f5f9",
+    badgeText: "#475569",
+  },
+  amber: {
+    bg: "rgba(255,251,235,0.6)",
+    bgDark: "rgba(120,53,15,0.2)",
+    dot: "#fbbf24",
+    border: "#fbbf24",
+    badgeBg: "#fef3c7",
+    badgeText: "#d97706",
+  },
+  emerald: {
+    bg: "rgba(236,253,245,0.6)",
+    bgDark: "rgba(6,78,59,0.2)",
+    dot: "#34d399",
+    border: "#34d399",
+    badgeBg: "#d1fae5",
+    badgeText: "#059669",
+  },
+} as const
+
+type ColorName = keyof typeof COLOR_STYLES
 
 interface BoardColumnProps {
   column: ColumnConfig
@@ -30,14 +50,13 @@ export function BoardColumn({ column }: BoardColumnProps) {
   const [title, setTitle] = useState("")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  const c = COLOR_STYLES[column.colorName as ColorName] ?? COLOR_STYLES.slate
   const columnTasks = taskList.filter((task) => task.status === column.id)
   const isDraggedOver = dragCounter > 0
 
   // Auto-focus the textarea when the inline form opens
   useEffect(() => {
-    if (isAdding) {
-      textareaRef.current?.focus()
-    }
+    if (isAdding) textareaRef.current?.focus()
   }, [isAdding])
 
   const handleDragEnter = (e: React.DragEvent) => {
@@ -58,23 +77,16 @@ export function BoardColumn({ column }: BoardColumnProps) {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setDragCounter(0)
-
     const draggedId = e.dataTransfer.getData("text/plain")
     const existingTask = taskList.find((task) => String(task.id) === draggedId)
-    if (!existingTask) return
-    if (existingTask.status === column.id) return
-
-    const updated: TaskRecord = {
-      ...existingTask,
-      status: column.id as Status,
-    }
+    if (!existingTask || existingTask.status === column.id) return
+    const updated: TaskRecord = { ...existingTask, status: column.id as Status }
     dispatch({ type: TASK_SAVE_REQUESTED, payload: updated })
   }
 
   const handleSubmit = () => {
     const trimmed = title.trim()
     if (!trimmed) return
-
     const newTask: TaskRecord = {
       id: crypto.randomUUID(),
       title: trimmed,
@@ -85,7 +97,6 @@ export function BoardColumn({ column }: BoardColumnProps) {
       subtasks: [],
       tags: [],
     }
-
     dispatch({ type: TASK_CREATE_REQUESTED, payload: newTask })
     setTitle("")
     setIsAdding(false)
@@ -97,25 +108,18 @@ export function BoardColumn({ column }: BoardColumnProps) {
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSubmit()
-    }
-    if (e.key === "Escape") {
-      handleCancel()
-    }
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit() }
+    if (e.key === "Escape") handleCancel()
   }
 
   return (
     <div
-      className={`
-        flex flex-col h-[70vh] rounded-2xl border transition-all duration-200
-        ${column.bgColor}
-        ${isDraggedOver
-          ? `border-dashed border-2 ${column.borderColor} scale-[1.01]`
-          : "border-border"
-        }
-      `}
+      className={`flex flex-col max-h-[70vh] rounded-2xl border transition-all duration-200 ${isDraggedOver ? "border-dashed border-2 scale-[1.01]" : "border-border"
+        }`}
+      style={{
+        backgroundColor: c.bg,
+        ...(isDraggedOver ? { borderColor: c.border } : {}),
+      }}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
@@ -124,13 +128,14 @@ export function BoardColumn({ column }: BoardColumnProps) {
       {/* Column Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3">
         <div className="flex items-center gap-2">
-          <span className={`w-2.5 h-2.5 rounded-full ${column.dotColor}`} />
+          <span
+            className="w-2.5 h-2.5 rounded-full"
+            style={{ backgroundColor: c.dot }}
+          />
           <h2 className="text-sm font-semibold text-foreground">{column.label}</h2>
           <span
-            className={`
-              ml-1 text-xs font-semibold px-2 py-0.5 rounded-full
-              ${column.color}
-            `}
+            className="ml-1 text-xs font-semibold px-2 py-0.5 rounded-full"
+            style={{ backgroundColor: c.badgeBg, color: c.badgeText }}
           >
             {columnTasks.length}
           </span>
@@ -138,25 +143,20 @@ export function BoardColumn({ column }: BoardColumnProps) {
       </div>
 
       {/* Divider */}
-      <div className={`mx-4 h-0.5 rounded-full ${column.dotColor} opacity-30 mb-3`} />
-
-      {/* Cards */}
       <div
-        className={`
-          flex flex-col gap-3 px-3 pb-3 flex-1 min-h-0 overflow-y-auto transition-all duration-200
-          ${isDraggedOver ? "pointer-events-none" : ""}
-        `}
+        className="mx-4 h-0.5 rounded-full opacity-30 mb-3"
+        style={{ backgroundColor: c.dot }}
+      />
+
+      {/* Cards — only this region scrolls */}
+      <div
+        className={`flex flex-col gap-3 px-3 pb-3 flex-1 min-h-0 overflow-y-auto transition-all duration-200 ${isDraggedOver ? "pointer-events-none" : ""
+          }`}
       >
         {columnTasks.length === 0 && !isAdding ? (
           <div
-            className={`
-              flex flex-col items-center justify-center flex-1 min-h-[120px]
-              rounded-xl border-2 border-dashed transition-colors duration-200
-              ${isDraggedOver
-                ? `${column.borderColor} bg-opacity-10`
-                : "border-border text-muted-foreground/50"
-              }
-            `}
+            className="flex flex-col items-center justify-center flex-1 min-h-[120px] rounded-xl border-2 border-dashed transition-colors duration-200"
+            style={isDraggedOver ? { borderColor: c.border } : undefined}
           >
             <span className="text-xs text-muted-foreground/60">
               {isDraggedOver ? "Drop here" : "No tasks"}

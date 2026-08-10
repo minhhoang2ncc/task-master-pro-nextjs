@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { decrypt } from '@/libs/utils/src/session'
 
 // Routes that require authentication
-const protectedRoutes = ['/dashboard', '/analytics', '/settings', '/task']
+const protectedRoutes = ['/dashboard', '/analytics', '/settings', '/task', '/board']
 // Routes only for unauthenticated users (redirect to dashboard if logged in)
 const publicOnlyRoutes = ['/login', '/signup']
 

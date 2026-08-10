@@ -4,6 +4,7 @@
 @import "@fontsource-variable/inter";
 @plugin "@tailwindcss/typography";
 
+
 /* ── Tiptap / ProseMirror editor overrides ────────────────────────────────── */
 .ProseMirror ul,
 .rte-preview ul {
