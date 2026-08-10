@@ -31,24 +31,24 @@ export default function DashboardPage() {
       </TitleBar>
       <div className="flex flex-col gap-4 p-4 w-full h-fit">
         <SummaryTabs />
-        {taskFilter === "all" ? (
-
-          <div className="grid grid-cols-3 gap-4">
-            {filterList.map((value, index) => {
-              const title = value.charAt(0).toUpperCase() + value.slice(1)
-              return (
-                <div key={index} className="flex flex-col gap-2">
-                  <h3 className="text-sm font-semibold text-muted-foreground">
-                    {title}
-                  </h3>
-                  <TaskList filter={value} />
-                </div>
-              )
-            })}
-          </div>
-        ) : (
-          <TaskList filter={taskFilter} />
-        )}
+        {/* {taskFilter === "all" ? ( */}
+        {/**/}
+        {/*   <div className="grid grid-cols-3 gap-4"> */}
+        {/*     {filterList.map((value, index) => { */}
+        {/*       const title = value.charAt(0).toUpperCase() + value.slice(1) */}
+        {/*       return ( */}
+        {/*         <div key={index} className="flex flex-col gap-2"> */}
+        {/*           <h3 className="text-sm font-semibold text-muted-foreground"> */}
+        {/*             {title} */}
+        {/*           </h3> */}
+        {/*           <TaskList filter={value} /> */}
+        {/*         </div> */}
+        {/*       ) */}
+        {/*     })} */}
+        {/*   </div> */}
+        {/* ) : ( */}
+        <TaskList filter={taskFilter} />
+        {/* )} */}
         <Hint />
       </div>
       <Button

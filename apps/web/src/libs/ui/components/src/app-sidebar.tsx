@@ -18,7 +18,7 @@ import { Button } from "@repo/ui"
 import { useSelector } from "react-redux"
 import type { RootState } from "@/redux/store"
 
-import { LayoutDashboard, Settings, BarChart2, LogOut, Loader2 } from "lucide-react"
+import { LayoutDashboard, Settings, BarChart2, LogOut, Loader2, Kanban } from "lucide-react"
 import { BUTTON_VARIANTS, SIDEBAR_ITEM } from '@/shared/styles/tailwind-classes'
 import { cn } from '@repo/utils'
 import { Card, CardContent } from "@repo/ui"
@@ -44,6 +44,7 @@ export function AppSidebar() {
 
   const sidebarItems = [
     { name: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+    { name: "Board View", url: "/board", icon: Kanban },
     { name: "Analytics", url: "/analytics", icon: BarChart2 },
     { name: "Settings", url: "/settings", icon: Settings },
   ]
