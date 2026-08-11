@@ -7,6 +7,7 @@ import taskReducer from './slices/taskSlice'
 import userReducer from './slices/userSlice'
 import notifyReducer from './slices/notifySlice'
 import languageReducer from './slices/languageSlice'
+import columnsReducer from './slices/columnsSlice'
 
 const sagaMiddleware = createSagaMiddleware()
 
@@ -15,11 +16,12 @@ const reducers = {
   user: userReducer,
   notify: notifyReducer,
   language: languageReducer,
+  columns: columnsReducer,
 }
 
 const rootReducer = combineReducers(reducers)
 
-const rememberedKeys = ['tasks', 'user', 'notify', 'language']
+const rememberedKeys = ['tasks', 'user', 'notify', 'language', 'columns']
 
 const reducer = rememberReducer(rootReducer)
 

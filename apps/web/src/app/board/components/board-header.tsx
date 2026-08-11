@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import {
   Kanban, CheckCircle2, Clock, AlertCircle,
-  SlidersHorizontal, X, ChevronDown,
+  SlidersHorizontal, X, ChevronDown, Plus, Columns3, Trash2,
 } from "lucide-react"
 import type { RootState } from "@/redux/store"
-import type { BoardFilters } from "@repo/types"
+import type { BoardFilters, ColumnConfig } from "@repo/types"
 
 const DATE_OPTIONS: { value: BoardFilters["dateRange"]; label: string; description: string }[] = [
   { value: "all", label: "All dates", description: "No date filter" },
@@ -24,27 +24,58 @@ const PRIORITY_COLORS: Record<string, { bg: string; text: string; dot: string }>
   High: { bg: "#fef2f2", text: "#dc2626", dot: "#ef4444" },
 }
 
+const COLOR_PRESETS: { name: string; label: string; dot: string }[] = [
+  { name: "violet", label: "Violet", dot: "#8b5cf6" },
+  { name: "rose", label: "Rose", dot: "#f43f5e" },
+  { name: "sky", label: "Sky", dot: "#0ea5e9" },
+  { name: "orange", label: "Orange", dot: "#f97316" },
+  { name: "teal", label: "Teal", dot: "#14b8a6" },
+  { name: "pink", label: "Pink", dot: "#ec4899" },
+  { name: "lime", label: "Lime", dot: "#84cc16" },
+  { name: "indigo", label: "Indigo", dot: "#6366f1" },
+]
+
+const DEFAULT_IDS = new Set(['todo', 'pending', 'completed'])
+
 interface BoardHeaderProps {
   filters: BoardFilters
   onFiltersChange: (f: BoardFilters) => void
+  columns: ColumnConfig[]
+  onAddColumn: (col: ColumnConfig) => void
+  onDeleteColumn: (col: ColumnConfig) => void
 }
 
-export function BoardHeader({ filters, onFiltersChange }: BoardHeaderProps) {
+export function BoardHeader({ filters, onFiltersChange, columns, onAddColumn, onDeleteColumn }: BoardHeaderProps) {
   const tasks = useSelector((state: RootState) => state.tasks)
   const user = useSelector((state: RootState) => state.user)
-  const [open, setOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Close dropdown on outside click
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [colOpen, setColOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [colName, setColName] = useState("")
+  const [colColor, setColColor] = useState(COLOR_PRESETS[0].name)
+
+  const filterRef = useRef<HTMLDivElement>(null)
+  const colRef = useRef<HTMLDivElement>(null)
+  const deleteRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false)
-      }
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) setFilterOpen(false)
+      if (colRef.current && !colRef.current.contains(e.target as Node)) setColOpen(false)
+      if (deleteRef.current && !deleteRef.current.contains(e.target as Node)) setDeleteOpen(false)
     }
     document.addEventListener("mousedown", handler)
     return () => document.removeEventListener("mousedown", handler)
   }, [])
+
+  // Focus input when column dropdown opens
+  useEffect(() => {
+    if (colOpen) setTimeout(() => inputRef.current?.focus(), 50)
+    else { setColName(""); setColColor(COLOR_PRESETS[0].name) }
+  }, [colOpen])
 
   const stats = {
     total: tasks.length,
@@ -57,7 +88,6 @@ export function BoardHeader({ filters, onFiltersChange }: BoardHeaderProps) {
     ? Math.round((stats.completed / stats.total) * 100)
     : 0
 
-  // Count active filters for the badge
   const activeCount =
     (filters.dateRange !== "all" ? 1 : 0) +
     filters.priority.length
@@ -70,6 +100,22 @@ export function BoardHeader({ filters, onFiltersChange }: BoardHeaderProps) {
   }
 
   const clearAll = () => onFiltersChange({ dateRange: "all", priority: [] })
+
+  const slugify = (str: string) =>
+    str.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")
+
+  const existingColumnIds = columns.map((c) => c.id)
+  const customColumns = columns.filter((c) => !DEFAULT_IDS.has(c.id))
+
+  const columnId = slugify(colName) || ""
+  const isDuplicate = !!columnId && existingColumnIds.includes(columnId as ColumnConfig["id"])
+  const canCreate = !!colName.trim() && !isDuplicate
+
+  const handleCreateColumn = () => {
+    if (!canCreate) return
+    onAddColumn({ id: columnId as ColumnConfig["id"], label: colName.trim(), colorName: colColor })
+    setColOpen(false)
+  }
 
   const statCards = [
     { id: "todo", icon: Clock, color: { bg: "#f1f5f9", icon: "#64748b" }, label: "To Do", value: stats.todo },
@@ -93,15 +139,146 @@ export function BoardHeader({ filters, onFiltersChange }: BoardHeaderProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Filter button + dropdown */}
-          <div className="relative" ref={dropdownRef}>
+        <div className="flex items-center gap-2">
+          {/* ── Add Column dropdown ── */}
+          <div className="relative" ref={colRef}>
+            <button
+              id="add-column-btn"
+              onClick={() => { setColOpen((v) => !v); setFilterOpen(false); setDeleteOpen(false) }}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-sm font-medium transition-all duration-150 ${colOpen
+                ? "bg-indigo-50 border-indigo-300 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-700 dark:text-indigo-300"
+                : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-indigo-300"
+                }`}
+            >
+              <Plus className="w-4 h-4" />
+              Column
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${colOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {colOpen && (
+              <div
+                className="absolute right-0 top-full mt-2 w-56 z-50 rounded-2xl border border-border bg-card shadow-xl shadow-black/10 overflow-hidden"
+                style={{ animation: "slideDown 0.15s ease" }}
+              >
+                {/* Header */}
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+                  <Columns3 className="w-3.5 h-3.5 text-muted-foreground" />
+                  <span className="text-sm font-semibold text-foreground">New column</span>
+                </div>
+
+                {/* Name input */}
+                <div className="px-3 pt-3 pb-2">
+                  <input
+                    ref={inputRef}
+                    value={colName}
+                    onChange={(e) => setColName(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleCreateColumn(); if (e.key === "Escape") setColOpen(false) }}
+                    placeholder="Column name…"
+                    className="w-full h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:border-indigo-400 transition-colors"
+                    aria-invalid={isDuplicate}
+                  />
+                  {isDuplicate && (
+                    <p className="mt-1 text-[11px] text-destructive px-0.5">Name already exists.</p>
+                  )}
+                </div>
+
+                {/* Color swatches */}
+                <div className="px-3 pb-3">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Color</p>
+                  <div className="grid grid-cols-8 gap-1.5">
+                    {COLOR_PRESETS.map((c) => (
+                      <button
+                        key={c.name}
+                        type="button"
+                        title={c.label}
+                        onClick={() => setColColor(c.name)}
+                        className="w-5 h-5 rounded-full transition-transform hover:scale-110 focus:outline-none"
+                        style={{
+                          backgroundColor: c.dot,
+                          outline: colColor === c.name ? `2px solid ${c.dot}` : "2px solid transparent",
+                          outlineOffset: "2px",
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Create button */}
+                <div className="px-3 pb-3">
+                  <button
+                    id="create-column-submit-btn"
+                    onClick={handleCreateColumn}
+                    disabled={!canCreate}
+                    className="w-full flex items-center justify-center gap-1.5 h-8 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Create column
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ── Delete Column dropdown ── */}
+          <div className="relative" ref={deleteRef}>
+            <button
+              id="delete-column-btn"
+              onClick={() => { setDeleteOpen((v) => !v); setColOpen(false); setFilterOpen(false) }}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-sm font-medium transition-all duration-150 ${
+                deleteOpen
+                  ? "bg-rose-50 border-rose-300 text-rose-700 dark:bg-rose-950/40 dark:border-rose-700 dark:text-rose-300"
+                  : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-rose-300"
+              }`}
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${deleteOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {deleteOpen && (
+              <div
+                className="absolute right-0 top-full mt-2 w-52 z-50 rounded-2xl border border-border bg-card shadow-xl shadow-black/10 overflow-hidden"
+                style={{ animation: "slideDown 0.15s ease" }}
+              >
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+                  <Trash2 className="w-3.5 h-3.5 text-muted-foreground" />
+                  <span className="text-sm font-semibold text-foreground">Delete column</span>
+                </div>
+
+                {customColumns.length === 0 ? (
+                  <p className="px-4 py-4 text-xs text-muted-foreground text-center">
+                    No custom columns yet.
+                  </p>
+                ) : (
+                  <div className="p-1.5 flex flex-col gap-0.5">
+                    {customColumns.map((col) => {
+                      const dot = COLOR_PRESETS.find((p) => p.name === col.colorName)?.dot ?? "#94a3b8"
+                      return (
+                        <button
+                          key={col.id}
+                          onClick={() => { onDeleteColumn(col); setDeleteOpen(false) }}
+                          className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-left text-sm text-foreground hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-700 dark:hover:text-rose-300 transition-colors group"
+                        >
+                          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: dot }} />
+                          <span className="flex-1 truncate font-medium">{col.label}</span>
+                          <Trash2 className="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 transition-opacity" />
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ── Filter dropdown ── */}
+          <div className="relative" ref={filterRef}>
             <button
               id="board-filter-btn"
-              onClick={() => setOpen((v) => !v)}
+              onClick={() => { setFilterOpen((v) => !v); setColOpen(false); setDeleteOpen(false) }}
               className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl border text-sm font-medium transition-all duration-150 ${activeCount > 0
-                  ? "bg-indigo-50 border-indigo-300 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-700 dark:text-indigo-300"
-                  : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-indigo-300"
+                ? "bg-indigo-50 border-indigo-300 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-700 dark:text-indigo-300"
+                : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-indigo-300"
                 }`}
             >
               <SlidersHorizontal className="w-4 h-4" />
@@ -111,11 +288,11 @@ export function BoardHeader({ filters, onFiltersChange }: BoardHeaderProps) {
                   {activeCount}
                 </span>
               )}
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${filterOpen ? "rotate-180" : ""}`} />
             </button>
 
             {/* Dropdown panel */}
-            {open && (
+            {filterOpen && (
               <div
                 className="absolute right-0 top-full mt-2 w-64 z-50 rounded-2xl border border-border bg-card shadow-xl shadow-black/10 overflow-hidden"
                 style={{ animation: "slideDown 0.15s ease" }}
@@ -147,11 +324,10 @@ export function BoardHeader({ filters, onFiltersChange }: BoardHeaderProps) {
                           key={opt.value}
                           onClick={() => onFiltersChange({ ...filters, dateRange: opt.value })}
                           className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left transition-colors duration-100 ${active
-                              ? "bg-indigo-50 dark:bg-indigo-950/40"
-                              : "hover:bg-muted/60"
+                            ? "bg-indigo-50 dark:bg-indigo-950/40"
+                            : "hover:bg-muted/60"
                             }`}
                         >
-                          {/* Radio dot */}
                           <span
                             className={`flex-shrink-0 w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center transition-colors ${active ? "border-indigo-600" : "border-muted-foreground/40"
                               }`}
@@ -188,7 +364,6 @@ export function BoardHeader({ filters, onFiltersChange }: BoardHeaderProps) {
                           className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left transition-colors duration-100 ${active ? "bg-muted/60" : "hover:bg-muted/40"
                             }`}
                         >
-                          {/* Checkbox */}
                           <span
                             className={`flex-shrink-0 w-3.5 h-3.5 rounded border-2 flex items-center justify-center transition-all ${active ? "border-transparent" : "border-muted-foreground/40"
                               }`}
@@ -200,12 +375,10 @@ export function BoardHeader({ filters, onFiltersChange }: BoardHeaderProps) {
                               </svg>
                             )}
                           </span>
-                          {/* Dot + label */}
                           <span className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: col.dot }} />
                             <span className="text-xs font-medium text-foreground">{p}</span>
                           </span>
-                          {/* Pill */}
                           <span
                             className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded-md"
                             style={{ backgroundColor: col.bg, color: col.text }}
