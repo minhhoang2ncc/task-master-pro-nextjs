@@ -18,7 +18,7 @@ export default function DashboardPage() {
   }, [])
   const user = useSelector((state: RootState) => state.user)
   const tasks = useSelector((state: RootState) => state.tasks)
-  const [taskFilter, setTaskFilter] = useState<string>("all")
+
 
   if (!mounted) {
     return null
@@ -27,7 +27,7 @@ export default function DashboardPage() {
   return (
     <section>
       <TitleBar>
-        <TitleContent name={user.displayName || "Assignee"} numTask={tasks.length} taskFilter={taskFilter} setTaskFilter={setTaskFilter} />
+        <TitleContent name={user.displayName || "Assignee"} numTask={tasks.length} />
       </TitleBar>
       <div className="flex flex-col gap-4 p-4 w-full h-fit">
         <SummaryTabs />
@@ -47,7 +47,7 @@ export default function DashboardPage() {
         {/*     })} */}
         {/*   </div> */}
         {/* ) : ( */}
-        <TaskList filter={taskFilter} />
+        <TaskList />
         {/* )} */}
         <Hint />
       </div>
