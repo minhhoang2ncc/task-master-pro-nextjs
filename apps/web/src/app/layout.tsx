@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -19,7 +19,22 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "TaskMaster Pro",
-  description: "Next.js migration of TaskMaster Pro with Redux Saga and Shadcn UI",
+  description: "Professional task management — boards, analytics, and more.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "TaskMaster",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default async function RootLayout({

@@ -9,9 +9,11 @@ export async function createSession(userId: string, accessToken?: string): Promi
   const expiresAt = new Date(Date.now() + SESSION_DURATION_MS)
   const token = await encrypt({ userId, expiresAt, accessToken })
   const cookieStore = await cookies()
+
+  const isSecure = process.env.SECURE_COOKIES === 'true'
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: isSecure,
     expires: expiresAt,
     sameSite: 'lax',
     path: '/',
