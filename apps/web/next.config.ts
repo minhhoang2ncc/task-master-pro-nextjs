@@ -12,6 +12,9 @@ const withSerwist = withSerwistInit({
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  // Produces a minimal self-contained output — required for Docker.
+  // Copies only the necessary node_modules into .next/standalone.
+  output: 'standalone',
 };
 
 export default withSerwist(nextConfig);

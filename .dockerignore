@@ -1,0 +1,43 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies (re-installed during build)
+node_modules
+**/node_modules
+
+# Next.js build outputs (re-built during build)
+**/.next
+**/out
+
+# Turborepo cache
+**/.turbo
+
+# Exclude ALL .env files by default — secrets are injected via build args and
+# runtime environment variables.
+.env*
+**/.env*
+
+# Re-include apps/web/.env so Next.js can read NEXT_PUBLIC_* vars during
+# `next build`. The file is only present in the builder stage (not copied to
+# the final runner image).
+!apps/web/.env
+
+# TypeScript build info
+**/*.tsbuildinfo
+
+# OS artifacts
+**/.DS_Store
+**/*.pem
+
+# Logs
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+# Vercel
+.vercel
+
+# Docker
+Dockerfile
+.dockerignore

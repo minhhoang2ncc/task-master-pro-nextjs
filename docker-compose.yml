@@ -1,0 +1,30 @@
+# Run with:
+#   docker compose up --build
+#
+# Docker Compose automatically loads apps/web/.env for variable substitution
+# when you run:
+#   docker compose --env-file apps/web/.env up --build
+#
+# Or export the vars yourself:
+#   export $(grep -v '^#' apps/web/.env | xargs) && docker compose up --build
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* vars are inlined into the client JS bundle at build time.
+        # These are read from the shell environment (populated via --env-file above).
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}
+    ports:
+      - "3000:3000"
+    # Runtime secrets — injected at container start, never baked into the image.
+    env_file:
+      - ./apps/web/.env
+    environment:
+      # Override SECURE_COOKIES to false when testing locally over plain HTTP.
+      SECURE_COOKIES: ${SECURE_COOKIES:-false}
+    restart: unless-stopped
